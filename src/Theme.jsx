@@ -3,15 +3,21 @@ import PropTypes from 'prop-types';
 
 const theme = {
   colors: {
-    cblue: "#0077c8",
-    cbluelight1: "#64c7fa",
-    cbluelight2: "#b5d1e1",
-    cbluelight3: "#edf4f8",
-    cbluelight4: "#f0f9ff",
-    cbluelight5: "#fafcfe",
-    cbluedark3: "#394655",
-    cbluedark2: "#163159",
-    cbluedark1: "#0b669e",
+    blue: {
+      cblue: "#0077c8",
+      cbluelight1: "#64c7fa",
+      cbluelight2: "#b5d1e1",
+      cbluelight3: "#edf4f8",
+      cbluelight4: "#f0f9ff",
+      cbluelight5: "#fafcfe",
+      cbluedark3: "#394655",
+      cbluedark2: "#163159",
+      cbluedark1: "#0b669e",
+    },
+    yellow: {
+      cyellow: '#FFD457',
+      cyellowlight1: '#FDF881'
+    }
   },
 }
 

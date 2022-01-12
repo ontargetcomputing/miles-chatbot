@@ -5,7 +5,7 @@ const Banner = styled.header`
   justify-content: center;
   height: 64px;
   align-items: center;
-  background-color: ${(props) => props.theme.colors.cblue};
+  background-color: ${(props) => props.theme.colors.blue.cblue};
 `
 
 function Header() {
