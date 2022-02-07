@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import StartChartBot from "./StartChartBot"
+import ChatInput from "./ChatInput"
 import Button from "./Button"
 import BotHeader from "./BotHeader"
 import BotMessage from "./BotMessage"
@@ -27,11 +27,11 @@ function Layout() {
         <div className="flex">
           <Button label="Online Services" />
           <Button label="Vehicle or Vessel Registration" />
-          <Button label="Online Services" />
-          <Button label="Vehicle or Vessel Registration" />
+          <Button label="Driver’s License/ID Card" />
+          <Button label="Real ID" />
         </div>
       </LayoutWrapper>
-      <StartChartBot />
+      <ChatInput />
     </>
   )
 }

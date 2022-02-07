@@ -17,8 +17,7 @@ const Button = styled(ActionButton)`
   height: 38px;
 `
 
-//chatInput
-function StartChartBot() {
+function ChatInput() {
   return (
     <StartHereWrapper className="flex flex--align-center pl-30 pr-30">
       <InputText hideLabel placeholder="Start Chart" inputClass="" containerClass="cb-input-container" />
@@ -27,4 +26,4 @@ function StartChartBot() {
   )
 }
 
-export default StartChartBot
+export default ChatInput

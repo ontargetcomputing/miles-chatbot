@@ -16,6 +16,7 @@ const FooterContainer = styled.div`
 const ActionButton = styled(Button)`
   @media (max-width: 600px) {
     margin: 7.5px 4px;
+    padding: 10px 15px;
   }
   @media (max-width: 280px) {
     padding: 5px 8px;
@@ -26,9 +27,9 @@ const ActionButton = styled(Button)`
 function Footer() {
   return (
     <FooterContainer className="flex flex--nowrap flex--align-center flex--justify-content-start">
-      <ActionButton sm label="Save Chat" btnStyle={BUTTON_STYLE_SECONDARY} buttonClass="cb-button" />
-      <ActionButton sm label="Languages" btnStyle={BUTTON_STYLE_SECONDARY} buttonClass="cb-button" />
-      <ActionButton sm label="End Chat" btnStyle={BUTTON_STYLE_SECONDARY} buttonClass="cb-button" />
+      <ActionButton label="Save Chat" btnStyle={BUTTON_STYLE_SECONDARY} buttonClass="cb-button" />
+      <ActionButton label="Languages" btnStyle={BUTTON_STYLE_SECONDARY} buttonClass="cb-button" />
+      <ActionButton label="End Chat" btnStyle={BUTTON_STYLE_SECONDARY} buttonClass="cb-button" />
     </FooterContainer>
   )
 }
