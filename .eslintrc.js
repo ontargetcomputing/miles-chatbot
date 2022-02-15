@@ -4,6 +4,7 @@ module.exports = {
     browser: true,
     es2021: true,
     jest: true,
+    node: true,
   },
   extends: ["eslint:recommended", "plugin:react/recommended"],
   parserOptions: {
@@ -23,7 +24,7 @@ module.exports = {
     curly: "error",
     "prefer-template": "error",
     "no-irregular-whitespace": ["error", { skipStrings: false }],
-    "no-console": ["error", { allow: ["warn", "error"] }],
+    // "no-console": ["error", { allow: ["warn", "error"] }],
     complexity: ["error", { max: 6 }],
     "no-unused-vars": ["error", { ignoreRestSiblings: true, argsIgnorePattern: "^_" }],
     "max-lines": ["error", { max: 250, skipBlankLines: true, skipComments: true }],
