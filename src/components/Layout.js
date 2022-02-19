@@ -3,6 +3,8 @@ import ChatInput from "./ChatInput"
 import Button from "./Button"
 import BotHeader from "./BotHeader"
 import BotMessage from "./BotMessage"
+import { useSelector } from "react-redux"
+import Markdown from "react-markdown"
 
 const LayoutWrapper = styled.div`
   padding: 2rem;
@@ -12,16 +14,14 @@ const LayoutWrapper = styled.div`
 }
 `
 function Layout() {
+  const { lexResponse } = useSelector((store) => store.lexClient)
   return (
     <>
       <LayoutWrapper>
         <BotHeader>Miles:</BotHeader>
         <div className="bp-md:w--90 p-10">
           <BotMessage>
-            Hello, Im Miles, the California DMVs Virtual Assistant. Im here to answer general DMV related questions. I
-            am pretty smart, but sometimes I hit a bump in the road. If I cannot answer your question, type agent or you
-            will be prompted to chat with an agent during normal business hours, 8 a.m.–5 p.m. (Wednesday 9 a.m.-5
-            p.m.).
+            <Markdown>{lexResponse?.message}</Markdown>
           </BotMessage>
         </div>
         <div className="flex">

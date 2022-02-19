@@ -2,7 +2,7 @@ import { createReducer, createAction } from "@reduxjs/toolkit"
 import { Interactions } from "aws-amplify"
 
 export const leXTextCall = () => async (dispatch) => {
-  const userInput = "QID::Welcome"
+  const userInput = "DL"
   const response = await Interactions.send(process.env.REACT_APP_MILES_BOT, userInput)
   dispatch(lexPostCall(response))
 }
@@ -10,7 +10,7 @@ export const leXTextCall = () => async (dispatch) => {
 export const lexPostCall = createAction("lexClient/lexPostCall")
 
 const initialState = {
-  lexResponse: "",
+  lexResponse: {},
 }
 
 export default createReducer(initialState, {
