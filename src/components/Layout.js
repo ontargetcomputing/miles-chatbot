@@ -5,6 +5,8 @@ import BotHeader from './BotHeader'
 import BotMessage from './BotMessage'
 import { useSelector } from 'react-redux'
 import Markdown from 'react-markdown'
+import { useDispatch } from 'react-redux'
+import { searchQuery } from '../connectors/lexClient'
 
 const LayoutWrapper = styled.div`
   padding: 2rem;
@@ -20,22 +22,34 @@ const LayoutWrapper = styled.div`
 }
 `
 function Layout() {
+  const dispatch = useDispatch()
   const { lexResponse } = useSelector(store => store.lexClient)
   return (
     <>
       <LayoutWrapper>
-        <BotHeader>Miles:</BotHeader>
-        <div className='bp-md:w--90 p-10'>
-          <BotMessage>
-            <Markdown>{lexResponse?.message}</Markdown>
-          </BotMessage>
-        </div>
-        <div className='flex'>
-          <Button label='Online Services' />
-          <Button label='Vehicle or Vessel Registration' />
-          <Button label='Driver’s License/ID Card' />
-          <Button label='Real ID' />
-        </div>
+        {lexResponse.map((res, index) =>
+          res.type === 'bot' ? (
+            <div key={index}>
+              <BotHeader>Miles:</BotHeader>
+              <div className='bp-md:w--90 p-10'>
+                <BotMessage>
+                  <Markdown>{res.message}</Markdown>
+                </BotMessage>
+              </div>
+              <div className='flex'>
+                {res.buttons?.map(btn => (
+                  <Button
+                    key={btn.text}
+                    label={btn.text}
+                    onClick={() => dispatch(searchQuery(btn.value))}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div style={{ textAlign: 'right' }}>{res.message}</div>
+          )
+        )}
       </LayoutWrapper>
       <ChatInput />
     </>

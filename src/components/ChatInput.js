@@ -1,6 +1,9 @@
-import styled from "styled-components"
-import { InputText, BUTTON_STYLE_PRIMARY } from "@ca-dmv/core"
-import ActionButton from "./Button"
+import styled from 'styled-components'
+import { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { InputText, BUTTON_STYLE_PRIMARY } from '@ca-dmv/core'
+import ActionButton from './Button'
+import { searchQuery } from '../connectors/lexClient'
 
 const StartHereWrapper = styled.div`
   height: 65px;
@@ -18,11 +21,32 @@ const Button = styled(ActionButton)`
 `
 
 function ChatInput() {
+  const dispatch = useDispatch()
+  const [term, setSearchTerm] = useState('')
+
+  const handleSubmit = e => {
+    e.preventDefault()
+    dispatch(searchQuery(term))
+  }
   return (
-    <StartHereWrapper className="flex flex--align-center pl-30 pr-30">
-      <InputText hideLabel placeholder="Start Chart" inputClass="" containerClass="cb-input-container" />
-      <Button label="Start" btnStyle={BUTTON_STYLE_PRIMARY} buttonClass="ml-10 mt-3 mr-30" />
-    </StartHereWrapper>
+    <form onSubmit={e => handleSubmit(e)}>
+      <StartHereWrapper className='flex flex--align-center pl-30 pr-30'>
+        <InputText
+          onChange={e => setSearchTerm(e)}
+          hideLabel
+          placeholder='Start Chart'
+          inputClass=''
+          value={term}
+          containerClass='cb-input-container'
+        />
+        <Button
+          label='Start'
+          onClick={() => dispatch(searchQuery(term))}
+          btnStyle={BUTTON_STYLE_PRIMARY}
+          buttonClass='ml-10 mt-3 mr-30'
+        />
+      </StartHereWrapper>
+    </form>
   )
 }
 
