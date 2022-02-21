@@ -23,11 +23,11 @@ const LayoutWrapper = styled.div`
 `
 function Layout() {
   const dispatch = useDispatch()
-  const { lexResponse } = useSelector(store => store.lexClient)
+  const { lexThread } = useSelector(store => store.lexClient)
   return (
     <>
       <LayoutWrapper>
-        {lexResponse.map((res, index) =>
+        {lexThread.map((res, index) =>
           res.type === 'bot' ? (
             <div key={index}>
               <BotHeader>Miles:</BotHeader>

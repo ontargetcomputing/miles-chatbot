@@ -2,13 +2,13 @@ import { Interactions } from 'aws-amplify'
 import { lexPostCall, setSearchTerm } from '../ducks/lexClient'
 
 export const leXTextCall = searchTerm => async (dispatch, getState) => {
-  const { lexResponse } = getState().lexClient
+  const { lexThread } = getState().lexClient
   const response = await Interactions.send(
     process.env.REACT_APP_MILES_BOT,
     searchTerm
   )
   const newThread = [
-    ...lexResponse,
+    ...lexThread,
     {
       message: response.message,
       buttons: response?.responseCard?.genericAttachments[0]?.buttons
@@ -22,12 +22,12 @@ export const leXTextCall = searchTerm => async (dispatch, getState) => {
 }
 
 export const searchQuery = query => (dispatch, getState) => {
-  const { lexResponse } = getState().lexClient
+  const { lexThread } = getState().lexClient
   const value = {
     type: 'human',
     message: query,
   }
-  const newThread = [...lexResponse, value]
+  const newThread = [...lexThread, value]
   dispatch(lexPostCall(newThread))
   dispatch(setSearchTerm(query))
 }

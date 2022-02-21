@@ -3,13 +3,13 @@ export const lexPostCall = createAction('lexClient/lexPostCall')
 export const setSearchTerm = createAction('lexClient/setSearchTerm')
 
 const initialState = {
-  lexResponse: [],
+  lexThread: [],
   searchTerm: 'QID::Welcome',
 }
 
 export default createReducer(initialState, {
   [lexPostCall]: (state, action) => {
-    state.lexResponse = action.payload
+    state.lexThread = action.payload
   },
   [setSearchTerm]: (state, action) => {
     state.searchTerm = action.payload
