@@ -1,4 +1,8 @@
 {
-    "editor.codeActionsOnSave": null
-      
+  "prettier.printWidth": 80,
+  "prettier.singleQuote": true,
+  "prettier.semi": false,
+  "prettier.trailingComma": "es5",
+  "prettier.jsxSingleQuote": true,
+  "prettier.arrowParens": "avoid"
 }
