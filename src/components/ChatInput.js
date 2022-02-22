@@ -30,6 +30,7 @@ function ChatInput() {
   const handleSubmit = e => {
     e.preventDefault()
     dispatch(searchQuery(term))
+    setSearchTerm('')
   }
   return (
     <form onSubmit={e => handleSubmit(e)}>
