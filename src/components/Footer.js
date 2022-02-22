@@ -1,6 +1,9 @@
 import { BUTTON_STYLE_SECONDARY } from '@ca-dmv/core'
 import Button from './Button'
 import styled from 'styled-components'
+import { useDispatch, useSelector } from 'react-redux'
+import { setActionType } from '../ducks/lexClient'
+import { ACTION_TYPE } from '../helper/enum'
 
 const FooterContainer = styled.div`
   height: 81px;
@@ -15,23 +18,29 @@ const FooterContainer = styled.div`
 `
 
 function Footer() {
+  const dispatch = useDispatch();
+  const { actionType } = useSelector(store => store.lexClient);
   return (
     <FooterContainer className='flex flex--nowrap flex--align-center flex--justify-content-start'>
-      <Button
-        label='Save Chat'
-        btnStyle={BUTTON_STYLE_SECONDARY}
-        buttonClass='cb-button'
-      />
-      <Button
-        label='Languages'
-        btnStyle={BUTTON_STYLE_SECONDARY}
-        buttonClass='cb-button'
-      />
-      <Button
-        label='End Chat'
-        btnStyle={BUTTON_STYLE_SECONDARY}
-        buttonClass='cb-button'
-      />
+      {ACTION_TYPE.LANGUAGES !== actionType &&
+        <>
+          <Button
+            label='Save Chat'
+            btnStyle={BUTTON_STYLE_SECONDARY}
+            buttonClass='cb-button'
+          />
+          <Button
+            onClick={() => dispatch(setActionType(ACTION_TYPE.LANGUAGES))}
+            label='Languages'
+            btnStyle={BUTTON_STYLE_SECONDARY}
+            buttonClass='cb-button'
+          />
+          <Button
+            label='End Chat'
+            btnStyle={BUTTON_STYLE_SECONDARY}
+            buttonClass='cb-button'
+          />
+        </>}
     </FooterContainer>
   )
 }

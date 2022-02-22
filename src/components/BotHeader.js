@@ -3,8 +3,8 @@ import styled from 'styled-components'
 
 const Header = styled.p`
   width: max-content;
-  height: 24px;
-  padding: 1px 9px;
+  height: 30px;
+  padding: 4px 15px;
   color: #203376;
   background: ${props => props.theme.colors.yellow.cyellow};
   border-radius: 5px;

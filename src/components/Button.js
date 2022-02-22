@@ -2,7 +2,7 @@ import { Button as DMVButton, BUTTON_STYLE_SECONDARY } from '@ca-dmv/core'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 
-const Button = ({ className, buttonClass, btnStyle, ...props }) => (
+export const Button = ({ className, buttonClass, btnStyle, ...props }) => (
   <DMVButton
     btnStyle={btnStyle}
     buttonClass={`cb-button ${className} ${buttonClass}`}
