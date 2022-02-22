@@ -4,5 +4,6 @@
   "prettier.semi": false,
   "prettier.trailingComma": "es5",
   "prettier.jsxSingleQuote": true,
-  "prettier.arrowParens": "avoid"
+  "prettier.arrowParens": "avoid",
+  "editor.formatOnSave": null,
 }
