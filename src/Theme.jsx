@@ -16,7 +16,14 @@ export const theme = {
     },
     yellow: {
       cyellow: '#FFD457',
-      cyellowlight1: '#FDF881'
+      cyellowlight1: '#FDF881',
+      cyellowdark:'#FFD76B'
+    },
+    black:{
+      cblack:'#000000'
+    },
+    gray:{
+      cgraylight3:'#C7C9CB'
     }
   },
 }

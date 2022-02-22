@@ -1,35 +1,46 @@
-import { BUTTON_STYLE_SECONDARY } from "@ca-dmv/core"
-import Button from "./Button"
-import styled from "styled-components"
+import { BUTTON_STYLE_SECONDARY } from '@ca-dmv/core'
+import Button from './Button'
+import styled from 'styled-components'
+import { useDispatch, useSelector } from 'react-redux'
+import { setActionType } from '../ducks/lexClient'
+import { ACTION_TYPE } from '../helper/enum'
 
 const FooterContainer = styled.div`
-  height: 61px;
+  height: 81px;
   padding: 0px 2px;
   bottom: 0;
   width: 100%;
   background: var(--c-blue);
   @media (max-width: 600px) {
     justify-content: center;
-  }
-`
-
-const ActionButton = styled(Button)`
-  @media (max-width: 600px) {
-    margin: 7.5px 4px;
-    padding: 10px 15px;
-  }
-  @media (max-width: 280px) {
-    padding: 5px 8px;
-    margin: 0 1px;
+    height: 61px;
   }
 `
 
 function Footer() {
+  const dispatch = useDispatch();
+  const { actionType } = useSelector(store => store.lexClient);
   return (
-    <FooterContainer className="flex flex--nowrap flex--align-center flex--justify-content-start">
-      <ActionButton label="Save Chat" btnStyle={BUTTON_STYLE_SECONDARY} buttonClass="cb-button" />
-      <ActionButton label="Languages" btnStyle={BUTTON_STYLE_SECONDARY} buttonClass="cb-button" />
-      <ActionButton label="End Chat" btnStyle={BUTTON_STYLE_SECONDARY} buttonClass="cb-button" />
+    <FooterContainer className='flex flex--nowrap flex--align-center flex--justify-content-start'>
+      {ACTION_TYPE.LANGUAGES !== actionType &&
+        <>
+          <Button
+            label='Save Chat'
+            btnStyle={BUTTON_STYLE_SECONDARY}
+            buttonClass='cb-button'
+          />
+          <Button
+            onClick={() => dispatch(setActionType(ACTION_TYPE.LANGUAGES))}
+            label='Languages'
+            btnStyle={BUTTON_STYLE_SECONDARY}
+            buttonClass='cb-button'
+          />
+          <Button
+            label='End Chat'
+            btnStyle={BUTTON_STYLE_SECONDARY}
+            buttonClass='cb-button'
+          />
+        </>}
     </FooterContainer>
   )
 }
