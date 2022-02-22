@@ -6,7 +6,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useRef } from 'react'
 import { searchQuery } from '../connectors/lexClient'
 import UserMessage from './UserMessage'
+import styled from 'styled-components'
 
+const ButtonWrapper = styled.div`
+margin-left: 12px;
+`
 
 
 export default function ChatMessagesLayout() {
@@ -26,7 +30,7 @@ export default function ChatMessagesLayout() {
               <Markdown>{res.message}</Markdown>
             </BotMessage>
           </div>
-          <div className='flex'>
+          <ButtonWrapper className='flex'>
             {res.buttons?.map(btn => (
               <Button
                 key={btn.text}
@@ -34,7 +38,7 @@ export default function ChatMessagesLayout() {
                 onClick={() => dispatch(searchQuery(btn.value))}
               />
             ))}
-          </div>
+          </ButtonWrapper>
         </div>
       ) : (
         <UserMessage key={index}>{res.message}</UserMessage>

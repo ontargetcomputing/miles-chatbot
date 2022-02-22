@@ -6,7 +6,7 @@ import ChangeLanguage from './ChangeLanguage'
 import ChatMessagesLayout from './ChatMessagesLayout'
 
 const LayoutWrapper = styled.div`
-  padding: 2rem;
+  padding: 1rem;
   overflow-y: auto;
   overflow-x: hidden;
   height:calc(100% - 196px);  
