@@ -6,6 +6,7 @@ const Message = styled.div`
   && ul {
     margin-left: 12px;
     list-style-type: none;
+    margin-bottom: calc(var(--spacing-unit-2)*1);
   }
 `
 export default function BotMessage({ children }) {
