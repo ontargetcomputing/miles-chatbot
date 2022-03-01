@@ -4,6 +4,13 @@ import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
 import { setActionType } from '../ducks/lexClient'
 import { ACTION_TYPE } from '../helper/enum'
+import { Locale } from "../locale/locale";
+
+const resource = (languageCode, key) => {
+  const stringResource = Locale[languageCode] || Locale["en"];
+
+  return stringResource[key] || `--${key}--`;
+}
 
 const FooterContainer = styled.div`
   height: 81px;
@@ -19,24 +26,24 @@ const FooterContainer = styled.div`
 
 function Footer() {
   const dispatch = useDispatch();
-  const { actionType } = useSelector(store => store.lexClient);
+  const { actionType, language } = useSelector(store => store.lexClient);
   return (
     <FooterContainer className='flex flex--nowrap flex--align-center flex--justify-content-start'>
       {ACTION_TYPE.LANGUAGES !== actionType &&
         <>
           <Button
-            label='Save Chat'
+            label={resource(language, "saveChat")}
             btnStyle={BUTTON_STYLE_SECONDARY}
             buttonClass='cb-button'
           />
           <Button
             onClick={() => dispatch(setActionType(ACTION_TYPE.LANGUAGES))}
-            label='Languages'
+            label={resource(language, "language")}
             btnStyle={BUTTON_STYLE_SECONDARY}
             buttonClass='cb-button'
           />
           <Button
-            label='End Chat'
+            label={resource(language, "endChat")}
             btnStyle={BUTTON_STYLE_SECONDARY}
             buttonClass='cb-button'
           />

@@ -1,5 +1,6 @@
 import { Interactions } from 'aws-amplify'
-import { lexPostCall, setSearchTerm } from '../ducks/lexClient'
+import { lexPostCall, setSearchTerm, setLanguage, setActionType } from '../ducks/lexClient'
+import { ACTION_TYPE } from "../helper/enum"
 
 export const leXTextCall = searchTerm => async (dispatch, getState) => {
   try {
@@ -16,11 +17,28 @@ export const leXTextCall = searchTerm => async (dispatch, getState) => {
           ? response?.responseCard?.genericAttachments[0]?.buttons
           : [],
         type: 'bot',
+        topic: response?.sessionAttributes?.topic
       },
-    ]
-    dispatch(lexPostCall(newThread))
-  } catch(err){
-   console.log(err)
+    ];
+
+    dispatch(lexPostCall(newThread));
+
+    let qnabotcontext = response?.sessionAttributes?.qnabotcontext;
+
+    if (qnabotcontext) {
+      qnabotcontext = JSON.parse(qnabotcontext);
+      dispatch(setLanguage(qnabotcontext.userLocale));
+    }
+
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+export const changeLanguage = (language) => async (dispatch) => {
+  if (language) {
+    dispatch(leXTextCall(language.label));  // arabic    
+    dispatch(setActionType(ACTION_TYPE.DEFAULT));
   }
 }
 
@@ -34,7 +52,7 @@ export const searchQuery = query => (dispatch, getState) => {
   dispatch(lexPostCall(newThread))
   dispatch(setSearchTerm(query))
 }
-;[
-  { message: '', buttons: [], type: 'bot' },
-  { msg: 'hello', tpe: 'human' },
-]
+  ;[
+    { message: '', buttons: [], type: 'bot' },
+    { msg: 'hello', tpe: 'human' },
+  ]

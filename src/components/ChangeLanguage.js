@@ -3,8 +3,27 @@ import { Button } from "./Button"
 import SelectMenu from "./SelectMenu"
 import { Icon, ICON_ARROW } from "@ca-dmv/core"
 import { useDispatch, useSelector } from "react-redux"
-import { setActionType, setLanguage } from "../ducks/lexClient"
+import { setActionType } from "../ducks/lexClient"
 import { ACTION_TYPE } from "../helper/enum"
+import { changeLanguage } from '../connectors/lexClient'
+import { useEffect } from "react"
+
+const LANGUAGES_EN = "en";
+const LANGUAGE_SOURCE = [
+  { value: "ar", label: "Arabic" },
+  { value: "hy", label: "Armenian" },
+  { value: "zh-TW", label: "Chinese (Traditional)" },
+  { value: "en", label: "English" },
+  { value: "hi", label: "Hindi" },
+  { value: "ja", label: "Japanese" },
+  { value: "ko", label: "Korean" },
+  { value: "fa", label: "Persian" },
+  { value: "ru", label: "Russian" },
+  { value: "es", label: "Spanish" },
+  { value: "vi", label: "Vietnamese" },
+  { value: "tl", label: "Tagalog" },
+  { value: "th", label: "Thai" },
+];
 
 const StyledTitle = styled.h4`
   margin-bottom: 35px;
@@ -59,42 +78,47 @@ const IconStyle = styled(Icon)`
 `;
 
 export default function ChangeLanguage() {
-    const dispatch = useDispatch();
-    const { language } = useSelector(store => store.lexClient);
-    const languages = [
-        { value: "ar", label: "Arabic" },
-        { value: "hy", label: "Armenian" },
-        { value: "zh-TW", label: "Chinese (Traditional)" },
-        { value: "en", label: "English" },
-        { value: "hi", label: "Hindi" },
-        { value: "ja", label: "Japanese" },
-        { value: "ko", label: "Korean" },
-        { value: "fa", label: "Persian" },
-        { value: "ru", label: "Russian" },
-        { value: "es", label: "Spanish" },
-        { value: "vi", label: "Vietnamese" },
-        { value: "tl", label: "Tagalog" },
-        { value: "th", label: "Thai" },
-    ]
+  const dispatch = useDispatch();
+  const { language } = useSelector(store => store.lexClient);
+  const prepareLanguageSource = () => LANGUAGE_SOURCE.map(source => {
+    const isSelectedLanguage = source.value === language;
+    const isEnglish = source.value === LANGUAGES_EN;
 
-    const onChange = (ln) => dispatch(setLanguage(ln));
+    if (isSelectedLanguage || isEnglish) {
+      source.disabled = false;
+    } else {
+      source.disabled = language !== LANGUAGES_EN;
+    }
+    return source;
+  });
 
-    return (
-        <div className="flex flex--col flex--align-center">
-            <StyledTitle>Change Language</StyledTitle>
-            <StyledSubTitle className="text--center">
-                SELECT YOUR PREFERRED LANGUAGE FROM THE LIST BELOW TO GET STARTED.
-            </StyledSubTitle>
-            <StyledSelectMenu
-                selectClass="w-100 "
-                onChange={onChange}
-                options={languages}
-                selectedValue={language}
-                hideLabel
-            />
-            <StyledArrowButton onClick={() => dispatch(setActionType(ACTION_TYPE.DEFAULT))}>
-                <IconStyle icon={ICON_ARROW} />
-            </StyledArrowButton>
-        </div>
-    )
+  let languages = prepareLanguageSource();
+
+  useEffect(() => {
+    languages = prepareLanguageSource();
+  }, [language])
+
+  const onChange = (ln) => {
+    const selectedLanguage = languages.find(language => language.value === ln);
+    dispatch(changeLanguage(selectedLanguage));
+  };
+
+  return (
+    <div className="flex flex--col flex--align-center">
+      <StyledTitle>Change Language</StyledTitle>
+      <StyledSubTitle className="text--center">
+        SELECT YOUR PREFERRED LANGUAGE FROM THE LIST BELOW TO GET STARTED.
+      </StyledSubTitle>
+      <StyledSelectMenu
+        selectClass="w-100 "
+        onChange={onChange}
+        options={languages}
+        selectedValue={language}
+        hideLabel
+      />
+      <StyledArrowButton onClick={() => dispatch(setActionType(ACTION_TYPE.DEFAULT))}>
+        <IconStyle icon={ICON_ARROW} />
+      </StyledArrowButton>
+    </div>
+  )
 }

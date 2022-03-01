@@ -19,6 +19,10 @@ export default createReducer(initialState, {
   [setSearchTerm]: (state, action) => {
     state.searchTerm = action.payload
   },
-  [setActionType]: (state, action) => { state.actionType = action.payload; },
-  [setLanguage]: (state, action) => { state.language = action.payload; }
+  [setActionType]: (state, action) => {
+    state.actionType = action.payload;
+  },
+  [setLanguage]: (state, action) => {
+  state.language = action.payload;
+  }
 })

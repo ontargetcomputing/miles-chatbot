@@ -1,23 +1,34 @@
 import styled from 'styled-components'
+import { useEffect } from 'react'
+import { useDispatch } from "react-redux"
 import ChatInput from './ChatInput'
 import { useSelector } from 'react-redux'
 import { ACTION_TYPE } from '../helper/enum'
 import ChangeLanguage from './ChangeLanguage'
 import ChatMessagesLayout from './ChatMessagesLayout'
+import { leXTextCall } from '../connectors/lexClient'
 
+const QID_WELCOM = "QID::Welcome";
 const LayoutWrapper = styled.div`
-  padding: 1rem;
+  padding: 2rem;
   overflow-y: auto;
   overflow-x: hidden;
-  height:calc(100% - 196px);  
+  height:calc(100% - 216px);  
 
   &.cb-full-height{
-    height:calc(100% - 131px); 
+    height:calc(100% - 151px); 
   }
-}
-`
+}`;
+
 function Layout() {
-  const { actionType } = useSelector(store => store.lexClient);
+  const dispatch = useDispatch();
+  const { actionType, lexThread } = useSelector(store => store.lexClient);
+
+  useEffect(() => {
+    const topicChanged = lexThread.length && lexThread[lexThread.length - 1]?.topic === 'language.changed';
+    topicChanged && dispatch(leXTextCall(QID_WELCOM));
+  }, [lexThread])
+
   const checkActionType = actionType === ACTION_TYPE.LANGUAGES
   return (
     <>
