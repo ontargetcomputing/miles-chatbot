@@ -10,16 +10,15 @@ import { leXTextCall } from '../connectors/lexClient'
 
 const QID_WELCOM = "QID::Welcome";
 const LayoutWrapper = styled.div`
-  padding: 2rem;
+  padding: 1rem;
   overflow-y: auto;
   overflow-x: hidden;
-  height:calc(100% - 216px);  
-
+  height:calc(100% - 196px);  
   &.cb-full-height{
-    height:calc(100% - 151px); 
+    height:calc(100% - 131px); 
   }
-}`;
-
+}
+`
 function Layout() {
   const dispatch = useDispatch();
   const { actionType, lexThread } = useSelector(store => store.lexClient);

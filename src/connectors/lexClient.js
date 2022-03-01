@@ -2,7 +2,7 @@ import { Interactions } from 'aws-amplify'
 import { lexPostCall, setSearchTerm, setLanguage, setActionType } from '../ducks/lexClient'
 import { ACTION_TYPE } from "../helper/enum"
 
-export const leXTextCall = searchTerm => async (dispatch, getState) => {
+export const leXTextCall = (searchTerm, initialRender=false) => async (dispatch, getState) => {
   try {
     const { lexThread } = getState().lexClient
     const response = await Interactions.send(
@@ -12,7 +12,7 @@ export const leXTextCall = searchTerm => async (dispatch, getState) => {
     const newThread = [
       ...lexThread,
       {
-        message: response.message,
+        message: initialRender ?  "" :response.message,
         buttons: response?.responseCard?.genericAttachments[0]?.buttons
           ? response?.responseCard?.genericAttachments[0]?.buttons
           : [],
@@ -56,3 +56,4 @@ export const searchQuery = query => (dispatch, getState) => {
     { message: '', buttons: [], type: 'bot' },
     { msg: 'hello', tpe: 'human' },
   ]
+

@@ -25,11 +25,11 @@ export default function ChatMessagesLayout() {
     {lexThread.map((res, index) =>
       res.type === 'bot' ? (
         <div key={index}>
-          <div className='bp-md:w--90 p-10'>
+          {res.message && <div className='bp-md:w--90 p-10'>
             <BotMessage>
-              <Markdown>{res.message}</Markdown>
+              <Markdown linkTarget="_blank">{res.message}</Markdown>
             </BotMessage>
-          </div>
+          </div>}
           <ButtonWrapper className='flex'>
             {res.buttons?.map(btn => (
               <Button

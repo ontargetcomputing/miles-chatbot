@@ -15,6 +15,11 @@ html, body, #root, .content-container{
 
 const App = () => {
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    const language = 'English'
+    dispatch(leXTextCall(language, true))
+  }, [])
   const { searchTerm } = useSelector(store => store.lexClient)
   useEffect(async () => {
     dispatch(leXTextCall(searchTerm))
