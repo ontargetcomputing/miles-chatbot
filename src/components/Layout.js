@@ -27,7 +27,6 @@ function Layout() {
   useEffect(() => {
     if (lexThread && lexThread.length) {
       const topic = lexThread[lexThread.length - 1].topic || "";
-
       if (topic) {
         dispatch(leXTextCall(QID_WELCOM));
       }
