@@ -10,31 +10,36 @@ import { leXTextCall } from '../connectors/lexClient'
 
 const QID_WELCOM = "QID::Welcome";
 const LayoutWrapper = styled.div`
-  padding: 1rem;
+  padding: 2rem;
   overflow-y: auto;
   overflow-x: hidden;
   height:calc(100% - 196px);  
   &.cb-full-height{
     height:calc(100% - 131px); 
   }
-}
-`
+}`;
+
 function Layout() {
   const dispatch = useDispatch();
-  const { actionType, lexThread } = useSelector(store => store.lexClient);
-
+  const { actionType, lexThread, isChatEnded } = useSelector(store => store.lexClient);
+  const checkActionType = actionType === ACTION_TYPE.LANGUAGES;
+  const isVisibleChatInput = !checkActionType && !isChatEnded;
   useEffect(() => {
-    const topicChanged = lexThread.length && lexThread[lexThread.length - 1]?.topic === 'language.changed';
-    topicChanged && dispatch(leXTextCall(QID_WELCOM));
+    if (lexThread && lexThread.length) {
+      const topic = lexThread[lexThread.length - 1].topic || "";
+
+      if (topic) {
+        dispatch(leXTextCall(QID_WELCOM));
+      }
+    }
   }, [lexThread])
 
-  const checkActionType = actionType === ACTION_TYPE.LANGUAGES
   return (
     <>
-      <LayoutWrapper className={checkActionType ? "cb-full-height" : ""}>
+      <LayoutWrapper className={!isVisibleChatInput ? "cb-full-height" : ""}>
         {checkActionType ? <ChangeLanguage /> : <ChatMessagesLayout />}
       </LayoutWrapper>
-      {!checkActionType && <ChatInput />}
+      {isVisibleChatInput && <ChatInput />}
     </>
   )
 }

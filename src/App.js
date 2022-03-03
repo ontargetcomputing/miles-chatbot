@@ -1,5 +1,5 @@
 import { createGlobalStyle } from 'styled-components'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import Layout from './components/Layout'
@@ -20,10 +20,6 @@ const App = () => {
     const language = 'English'
     dispatch(leXTextCall(language, true))
   }, [])
-  const { searchTerm } = useSelector(store => store.lexClient)
-  useEffect(async () => {
-    dispatch(leXTextCall(searchTerm))
-  }, [dispatch, searchTerm])
 
   return (
     <Theme>

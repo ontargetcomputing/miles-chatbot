@@ -2,7 +2,7 @@ import { BUTTON_STYLE_SECONDARY } from '@ca-dmv/core'
 import Button from './Button'
 import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
-import { setActionType } from '../ducks/lexClient'
+import { setActionType, setEndChat } from '../ducks/lexClient'
 import { ACTION_TYPE } from '../helper/enum'
 import { Locale } from "../locale/locale";
 
@@ -26,7 +26,8 @@ const FooterContainer = styled.div`
 
 function Footer() {
   const dispatch = useDispatch();
-  const { actionType, language } = useSelector(store => store.lexClient);
+  const { actionType, language, isChatEnded } = useSelector(store => store.lexClient);
+
   return (
     <FooterContainer className='flex flex--nowrap flex--align-center flex--justify-content-start'>
       {ACTION_TYPE.LANGUAGES !== actionType &&
@@ -36,17 +37,20 @@ function Footer() {
             btnStyle={BUTTON_STYLE_SECONDARY}
             buttonClass='cb-button'
           />
-          <Button
-            onClick={() => dispatch(setActionType(ACTION_TYPE.LANGUAGES))}
-            label={resource(language, "language")}
-            btnStyle={BUTTON_STYLE_SECONDARY}
-            buttonClass='cb-button'
-          />
-          <Button
-            label={resource(language, "endChat")}
-            btnStyle={BUTTON_STYLE_SECONDARY}
-            buttonClass='cb-button'
-          />
+            <Button
+              onClick={() => dispatch(setActionType(ACTION_TYPE.LANGUAGES))}
+              label={resource(language, "language")}
+              btnStyle={BUTTON_STYLE_SECONDARY}
+              buttonClass='cb-button'
+              disabled={isChatEnded}
+            />
+            <Button
+              onClick={() => dispatch(setEndChat(true))}
+              label={resource(language, "endChat")}
+              btnStyle={BUTTON_STYLE_SECONDARY}
+              buttonClass='cb-button'
+              disabled={isChatEnded}
+            />
         </>}
     </FooterContainer>
   )

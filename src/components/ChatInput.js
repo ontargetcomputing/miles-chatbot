@@ -1,9 +1,11 @@
 import styled from 'styled-components'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { InputText, BUTTON_STYLE_PRIMARY } from '@ca-dmv/core'
 import ActionButton from './Button'
-import { searchQuery } from '../connectors/lexClient'
+import { leXTextCall, searchQuery } from '../connectors/lexClient'
+
+const QID_WELCOM = "QID::Welcome";
 
 const StartHereWrapper = styled.div`
   height: 65px;
@@ -27,8 +29,13 @@ function ChatInput() {
   const dispatch = useDispatch()
   const [term, setSearchTerm] = useState('')
 
+  useEffect(() => {
+    //dispatch(searchQuery(QID_WELCOM))
+    dispatch(leXTextCall(QID_WELCOM));
+  }, [])
+
   const handleSubmit = e => {
-    e.preventDefault()
+    e.preventDefault();
     dispatch(searchQuery(term))
     setSearchTerm('')
   }
@@ -44,8 +51,8 @@ function ChatInput() {
           containerClass='cb-input-container'
         />
         <Button
+          isSubmit
           label='Start'
-          onClick={() => dispatch(searchQuery(term))}
           btnStyle={BUTTON_STYLE_PRIMARY}
           buttonClass='ml-10 mt-3 mr-30'
         />
