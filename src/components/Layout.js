@@ -8,7 +8,6 @@ import ChangeLanguage from './ChangeLanguage'
 import ChatMessagesLayout from './ChatMessagesLayout'
 import { leXTextCall } from '../connectors/lexClient'
 
-// const QID_WELCOM = "QID::Welcome";
 const LayoutWrapper = styled.div`
   padding: 2rem;
   overflow-y: auto;
@@ -24,12 +23,11 @@ function Layout() {
   const { actionType, lexThread, isChatEnded, searchTerm } = useSelector(store => store.lexClient);
   const checkActionType = actionType === ACTION_TYPE.LANGUAGES;
   const isVisibleChatInput = !checkActionType && !isChatEnded;
+
   useEffect(() => {
-    if (lexThread && lexThread.length) {
-      const topic = lexThread[lexThread.length - 1].topic || "";
-      if (topic) {
-        dispatch(leXTextCall(searchTerm));
-      }
+    const topicChanged = lexThread.length && lexThread[lexThread.length - 1]?.topic === 'language.changed'
+    if (topicChanged) {
+      dispatch(leXTextCall(searchTerm))
     }
   }, [lexThread])
 
