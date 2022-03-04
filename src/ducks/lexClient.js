@@ -4,12 +4,14 @@ export const lexPostCall = createAction('lexClient/lexPostCall');
 export const setSearchTerm = createAction('lexClient/setSearchTerm');
 export const setActionType = createAction("lexClient/setActionType");
 export const setLanguage = createAction("lexClient/setLanguage");
+export const setEndChat = createAction("lexClient/setEndChat");
 
 const initialState = {
   lexThread: [],
   searchTerm: 'QID::Welcome',
   actionType: ACTION_TYPE.DEFAULT,
-  language: "en"
+  language: "en",
+  isChatEnded: false
 }
 
 export default createReducer(initialState, {
@@ -19,6 +21,14 @@ export default createReducer(initialState, {
   [setSearchTerm]: (state, action) => {
     state.searchTerm = action.payload
   },
-  [setActionType]: (state, action) => { state.actionType = action.payload; },
-  [setLanguage]: (state, action) => { state.language = action.payload; }
+  [setActionType]: (state, action) => {
+    state.actionType = action.payload;
+  },
+  [setLanguage]: (state, action) => {
+
+    state.language = action.payload;
+  },
+  [setEndChat]: (state, action) => {
+    state.isChatEnded = action.payload;
+  }
 })

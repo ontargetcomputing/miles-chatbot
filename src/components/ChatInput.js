@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { useState } from 'react'
+import {  useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { InputText, BUTTON_STYLE_PRIMARY } from '@ca-dmv/core'
 import ActionButton from './Button'
@@ -28,7 +28,7 @@ function ChatInput() {
   const [term, setSearchTerm] = useState('')
 
   const handleSubmit = e => {
-    e.preventDefault()
+    e.preventDefault();
     dispatch(searchQuery(term))
     setSearchTerm('')
   }
@@ -44,8 +44,8 @@ function ChatInput() {
           containerClass='cb-input-container'
         />
         <Button
+          isSubmit
           label='Start'
-          onClick={() => dispatch(searchQuery(term))}
           btnStyle={BUTTON_STYLE_PRIMARY}
           buttonClass='ml-10 mt-3 mr-30'
         />
