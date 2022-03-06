@@ -17,7 +17,7 @@ jobs:
     - run: echo ${{ github.ref }}   
     - name: Set Environment
       run: |
-        if [[ "${{ github.ref }}" == "032802432428_dev" ]]; then
+        if [[ "${{ github.ref }}" == "032802432428-dev" ]]; then
           echo "Setting up dev environment"
           echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID_032802432428_DEV }}" >> $GITHUB_ENV
           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY_032802432428_DEV   }}" >> $GITHUB_ENV
