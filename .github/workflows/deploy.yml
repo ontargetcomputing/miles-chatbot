@@ -33,4 +33,5 @@ jobs:
         else
           echo 'Unknown branch for deploying to'
         fi
+
         aws s3 sync public/ s3://miles-chatbot-${{ github.ref }} --acl public-read
