@@ -14,7 +14,7 @@ jobs:
       with:
         node-version: '16'    
     - run: echo ${{ github.ref }}   
-    - name: Deploy
+    - name: Set Environment
       run: |
         if [[ "${{ github.ref }}" == "QBPM-10-DEV" ]]; then
           echo "Setting up dev environment"
@@ -40,5 +40,5 @@ jobs:
         aws-region: us-west-2
         role-duration-seconds: 1200
     - name: Deploy
-      run: aws s3 sync public/ s3://miles-chatbot-${{ github.ref }} --acl public-read
-
+      #run: aws s3 sync public/ s3://miles-chatbot-${{ github.ref }} --acl public-read
+      run: aws s3 sync public/ s3://miles-chatbot-qbpm-dev-10 --acl public-read
