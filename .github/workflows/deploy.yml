@@ -13,13 +13,7 @@ jobs:
     - uses: actions/setup-node@v2
       with:
         node-version: '16'    
-    - run: echo foobar
-    - run: echo ${{ github.ref }}
-    # - run: npm install -g npm-cli-login
-    # - name: Login to dmv npm registory
-    #   run: npm-cli-login -u octocat -p ${{secrets.DMV_GITHUB_PERSONAL_ACCESS_TOKEN}} -e richard.bach@dmv.ca.gov -r https://npm.pkg.github.com
-    # - run: npm install 
-    # - run: npm run build    
+    - run: echo ${{ github.ref }}   
     - name: Deploy
       run: |
         if [[ "${{ github.ref }}" == "QBPM-10-DEV" ]]; then
@@ -33,5 +27,18 @@ jobs:
         else
           echo 'Unknown branch for deploying to'
         fi
+    # - run: npm install -g npm-cli-login
+    # - name: Login to dmv npm registory
+    #   run: npm-cli-login -u octocat -p ${{secrets.DMV_GITHUB_PERSONAL_ACCESS_TOKEN}} -e richard.bach@dmv.ca.gov -r https://npm.pkg.github.com
+    # - run: npm install 
+    # - run: npm run build
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-west-2
+        role-duration-seconds: 1200
+    - name: Deploy
+      run: aws s3 sync public/ s3://miles-chatbot-${{ github.ref }} --acl public-read
 
-        aws s3 sync public/ s3://miles-chatbot-${{ github.ref }} --acl public-read
