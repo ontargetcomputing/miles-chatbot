@@ -18,9 +18,11 @@ jobs:
     - name: Set environment variables
       run: |
         if [[ "${{ github.ref }}" == "QBPM-10-DEV" ]]; then
+          echo "Setting up dev environment"
           echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID_032802432428_DEV }}" >> $GITHUB_ENV
           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY_032802432428_DEV   }}" >> $GITHUB_ENV
         elif [[ "${{ github.ref }}" == "595657360061-UAT" ]]; then
+          echo "Setting up uat environment"
           echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID_595657360061_UAT }}" >> $GITHUB_ENV
           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY_595657360061_UAT }}" >> $GITHUB_ENV
         else
