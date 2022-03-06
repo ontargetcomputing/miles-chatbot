@@ -2,7 +2,7 @@ name: Deploy
 on:
   pull_request:
     branches:
-      - 032802432428_dev
+      - 032802432428-dev
       - 595657360061-uat
     types: [closed]
 jobs:
