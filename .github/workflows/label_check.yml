@@ -1,3 +1,4 @@
+name: Semver Label Check
 on:
   pull_request:
     branches:
