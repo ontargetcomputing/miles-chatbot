@@ -24,7 +24,7 @@ jobs:
           echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID_595657360061_UAT }}" >> $GITHUB_ENV
           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY_595657360061_UAT }}" >> $GITHUB_ENV
         else
-          core.setFailed('Unknown branch')
+          core.setFailed('Unknown branch for deploying to')
         fi
     # - run: npm install -g npm-cli-login
     # - name: Login to dmv npm registory
