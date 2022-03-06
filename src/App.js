@@ -1,8 +1,33 @@
-function App() {
+import { createGlobalStyle } from 'styled-components'
+import { useDispatch } from 'react-redux'
+import Header from './components/Header'
+import Footer from './components/Footer'
+import Layout from './components/Layout'
+import Theme from './Theme'
+import { useEffect } from 'react'
+import { leXTextCall } from './connectors/lexClient'
+
+const GlobalStyle = createGlobalStyle`
+html, body, #root, .content-container{
+  height:100%;
+  width:100%;
+}`
+
+const App = () => {
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    const language = 'English'
+    dispatch(leXTextCall(language, true))
+  }, [])
+
   return (
-    <div className="App">
-      <h1>React App</h1>
-    </div>
+    <Theme>
+      <GlobalStyle />
+      <Header />
+      <Layout />
+      <Footer />
+    </Theme>
   )
 }
 
