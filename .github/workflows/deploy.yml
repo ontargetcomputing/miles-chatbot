@@ -17,14 +17,14 @@ jobs:
     - run: echo ${{ github.ref }}   
     - name: Set environment variables
       run: |
-        if [[ '${{ github.ref }}' == 'QBPM-10-DEV' ]]; then
+        if [[ "${{ github.ref }}" == "QBPM-10-DEV" ]]; then
           echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID_032802432428_DEV }}" >> $GITHUB_ENV
           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY_032802432428_DEV   }}" >> $GITHUB_ENV
-        elif [[ '${{ github.ref }}' == '595657360061-UAT' ]]; then
+        elif [[ "${{ github.ref }}" == "595657360061-UAT" ]]; then
           echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID_595657360061_UAT }}" >> $GITHUB_ENV
           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY_595657360061_UAT }}" >> $GITHUB_ENV
         else
-          core.setFailed('Unknown branch')
+          core.setFailed('Unknown branch ${{ github.ref }}')
         fi
     # - run: npm install -g npm-cli-login
     # - name: Login to dmv npm registory
