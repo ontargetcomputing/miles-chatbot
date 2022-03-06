@@ -2,7 +2,8 @@ name: Deploy
 on:
   pull_request:
     branches:
-      - QBPM-10-DEV
+      - 032802432428_dev
+      - 595657360061-uat
     types: [closed]
 jobs:
   deploy:
