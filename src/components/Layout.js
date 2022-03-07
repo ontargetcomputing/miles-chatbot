@@ -7,6 +7,7 @@ import { ACTION_TYPE } from '../helper/enum'
 import ChangeLanguage from './ChangeLanguage'
 import ChatMessagesLayout from './ChatMessagesLayout'
 import { leXTextCall } from '../connectors/lexClient'
+import IdleTime from './Idle'
 
 const LayoutWrapper = styled.div`
   padding: 2rem;
@@ -20,7 +21,8 @@ const LayoutWrapper = styled.div`
 
 function Layout() {
   const dispatch = useDispatch();
-  const { actionType, lexThread, isChatEnded, searchTerm } = useSelector(store => store.lexClient);
+  const { actionType, lexThread, chatEnded, searchTerm } = useSelector(store => store.lexClient);
+  const { isChatEnded } = chatEnded
   const checkActionType = actionType === ACTION_TYPE.LANGUAGES;
   const isVisibleChatInput = !checkActionType && !isChatEnded;
 
@@ -33,6 +35,7 @@ function Layout() {
 
   return (
     <>
+      <IdleTime idleTimeInMinutes={0.5} warnTimeInMinutes={0.333333} />
       <LayoutWrapper className={!isVisibleChatInput ? "cb-full-height" : ""}>
         {checkActionType ? <ChangeLanguage /> : <ChatMessagesLayout />}
       </LayoutWrapper>

@@ -15,10 +15,9 @@ const ButtonWrapper = styled.div`
 margin-left: 12px;
 `
 
-const EndChatMessage = styled.p`
+export const MessageText = styled.p`
 text-align: center;
 color: ${props => props.theme.colors.orange.corangedark1};
-font-weight: 600;
 margin: 10px;
 `
 
@@ -28,8 +27,6 @@ img {
   padding-left: 10px;
 }
 `
-const endText = "You've ended the Chat."
-
 const thumpsup = './assets/images/thums-up.svg'
 const thumpsdown = './assets/images/thums-down.svg'
 
@@ -61,7 +58,8 @@ RenderMessages.propTypes = {
 }
 
 export default function ChatMessagesLayout() {
-  const { lexThread, isChatEnded } = useSelector(store => store.lexClient);
+  const { lexThread, chatEnded } = useSelector(store => store.lexClient);
+  const { isChatEnded , message} = chatEnded
   const messagesEndRef = useRef(null);
   const dispatch = useDispatch();
   const scrollToBottom = () => messagesEndRef?.current?.scrollIntoView({ behavior: "smooth" });
@@ -92,7 +90,7 @@ export default function ChatMessagesLayout() {
         )
       )}
       <div ref={messagesEndRef} />
-      {isChatEnded && <EndChatMessage>{endText}</EndChatMessage>}
+      {isChatEnded && <MessageText>{message}</MessageText>}
     </>
   )
 }

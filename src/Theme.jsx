@@ -26,7 +26,7 @@ export const theme = {
       cgraylight3:'#C7C9CB'
     },
     orange: {
-    corangedark1: '#EF6C42'
+    corangedark1: '#C77600'
     }
   },
 }

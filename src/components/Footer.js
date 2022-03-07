@@ -24,9 +24,12 @@ const FooterContainer = styled.div`
   }
 `
 
+const endText = "You've ended the Chat."
+
 function Footer() {
   const dispatch = useDispatch();
-  const { actionType, language, isChatEnded } = useSelector(store => store.lexClient);
+  const { actionType, language, chatEnded } = useSelector(store => store.lexClient);
+  const { isChatEnded } = chatEnded
 
   return (
     <FooterContainer className='flex flex--nowrap flex--align-center flex--justify-content-start'>
@@ -45,7 +48,7 @@ function Footer() {
               disabled={isChatEnded}
             />
             <Button
-              onClick={() => dispatch(setEndChat(true))}
+              onClick={() => dispatch(setEndChat({ isChatEnded: true, message: endText }))}
               label={resource(language, "endChat")}
               btnStyle={BUTTON_STYLE_SECONDARY}
               buttonClass='cb-button'
