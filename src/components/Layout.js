@@ -34,8 +34,8 @@ function Layout() {
   }, [lexThread])
 
   return (
-    <>
-      <IdleTime idleTimeInMinutes={0.5} warnTimeInMinutes={0.333333} />
+    <>  
+    <IdleTime idleTimeInSeconds={30} warnTimeInSeconds={20} />
       <LayoutWrapper className={!isVisibleChatInput ? "cb-full-height" : ""}>
         {checkActionType ? <ChangeLanguage /> : <ChatMessagesLayout />}
       </LayoutWrapper>
