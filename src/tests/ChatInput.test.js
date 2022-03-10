@@ -1,6 +1,6 @@
 import React, { useState as useStateMock } from 'react'
 import ChatInput from "../components/ChatInput"
-import { mount, shallow } from "enzyme"
+import { mount } from "enzyme"
 import * as redux from 'react-redux'
 import { fireEvent, render, screen } from "@testing-library/react"
 import { ThemeProvider } from "styled-components"

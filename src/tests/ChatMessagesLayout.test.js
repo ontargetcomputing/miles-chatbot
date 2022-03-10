@@ -1,7 +1,6 @@
 import React, { useState as useStateMock } from 'react'
-import { mount, shallow } from "enzyme"
+import { mount } from "enzyme"
 import * as redux from 'react-redux'
-import { fireEvent, render, screen } from "@testing-library/react"
 import { ThemeProvider } from "styled-components"
 import { theme } from "../../../miles-chatbot/src/Theme"
 import ChatMessagesLayout from '../components/ChatMessagesLayout'

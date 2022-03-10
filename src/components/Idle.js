@@ -46,7 +46,7 @@ const IdleTime = ({ idleTimeInSeconds, warnTimeInSeconds }) => {
 
     useEffect(() => {
         startTimer();
-    }, [resetIdleTime])
+    }, [resetIdleTime, isChatEnded])
 
     const startTimer = () => {
         clearAllTimer();

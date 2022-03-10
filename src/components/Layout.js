@@ -9,6 +9,7 @@ import ChatMessagesLayout from './ChatMessagesLayout'
 import { leXTextCall } from '../connectors/lexClient'
 import IdleTime from './Idle'
 
+// const QID_WELCOM = "QID::Welcome";
 const LayoutWrapper = styled.div`
   padding: 2rem;
   overflow-y: auto;
@@ -34,7 +35,7 @@ function Layout() {
   }, [lexThread])
   return (
     <>     
-    <IdleTime idleTimeInSeconds={600} warnTimeInSeconds={60} />
+    <IdleTime idleTimeInSeconds={30} warnTimeInSeconds={20} />
       <LayoutWrapper className={!isVisibleChatInput ? "cb-full-height" : ""}>
         {checkActionType ? <ChangeLanguage /> : <ChatMessagesLayout />}
       </LayoutWrapper>

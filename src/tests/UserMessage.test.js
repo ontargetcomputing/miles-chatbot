@@ -1,6 +1,4 @@
-import { mount, shallow } from "enzyme"
-import { fireEvent, render, screen } from "@testing-library/react"
-import { ACTION_TYPE } from "../helper/enum"
+import { mount } from "enzyme"
 import UserMessage from "../components/UserMessage";
 import { ThemeProvider } from "styled-components";
 import { theme } from "../../../miles-chatbot/src/Theme";
@@ -17,6 +15,7 @@ describe("Button", () => {
                 <UserMessage><p>Custome Message</p></UserMessage>
             </ThemeProvider>
         )
+        expect(wrapper.length).toBe(1)
         expect(screen.getByText("Custome Message")).toBeInTheDocument();
     })
 })
