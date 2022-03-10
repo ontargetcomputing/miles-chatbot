@@ -1,19 +1,17 @@
 import { shallow } from "enzyme"
 import * as redux from 'react-redux'
-import React from "react";
-import React, { useState } from "react"
-import { fireEvent, render, screen } from "@testing-library/react"
-import App from "../App";
+import React from "react"
+import { render } from "@testing-library/react"
 import Layout from "../components/Layout";
+import { ThemeProvider } from "styled-components";
+import { theme } from "../../../miles-chatbot/src/Theme";
 
 const dispatchFn = jest.fn();
 const useSelectorSpy = jest.spyOn(redux, 'useSelector');
 const useDispatchMock = jest.spyOn(redux, 'useDispatch');
 describe("Layout", () => {
   beforeEach(() => {
-    useSelectorSpy.mockImplementation(callback => {
-      return callback({ lexClient: { actionType: "Language", lexThread:[{topic:'language.changed'}] } });
-    });
+    useSelectorSpy.mockImplementation(callback => callback({ lexClient: { actionType: "Language", lexThread:[{topic:'language.changed'}] } }));
 
     useDispatchMock.mockReturnValue(dispatchFn);
   });

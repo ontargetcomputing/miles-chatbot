@@ -1,10 +1,11 @@
 import { Interactions } from 'aws-amplify'
-import { lexPostCall, setLanguage, setActionType } from '../ducks/lexClient'
+import { lexPostCall, setLanguage, setActionType, resetIdleTimer } from '../ducks/lexClient'
 import { ACTION_TYPE } from "../helper/enum"
 
-export const leXTextCall = (searchTerm, initialRender=false) => async (dispatch, getState) => {
+export const leXTextCall = (searchTerm, initialRender = false) => async (dispatch, getState) => {
   try {
-    const { lexThread } = getState().lexClient
+    dispatch(resetIdleTimer());
+    const { lexThread } = getState().lexClient;
     const response = await Interactions.send(
       process.env.REACT_APP_MILES_BOT,
       searchTerm
@@ -12,7 +13,7 @@ export const leXTextCall = (searchTerm, initialRender=false) => async (dispatch,
     const newThread = [
       ...lexThread,
       {
-        message: initialRender ?  "" :response.message,
+        message: initialRender ? "" : response.message,
         buttons: response?.responseCard?.genericAttachments[0]?.buttons
           ? response?.responseCard?.genericAttachments[0]?.buttons
           : [],

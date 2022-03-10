@@ -5,13 +5,17 @@ export const setSearchTerm = createAction('lexClient/setSearchTerm');
 export const setActionType = createAction("lexClient/setActionType");
 export const setLanguage = createAction("lexClient/setLanguage");
 export const setEndChat = createAction("lexClient/setEndChat");
+export const resetIdleTimer = createAction("lexClient/resetIdleTimer");
 
 const initialState = {
   lexThread: [],
   searchTerm: 'QID::Welcome',
   actionType: ACTION_TYPE.DEFAULT,
   language: "en",
-  isChatEnded: false
+  chatEnded: {
+    isChatEnded: false,
+    message: ''
+  }
 }
 
 export default createReducer(initialState, {
@@ -29,6 +33,9 @@ export default createReducer(initialState, {
     state.language = action.payload;
   },
   [setEndChat]: (state, action) => {
-    state.isChatEnded = action.payload;
+    state.chatEnded = action.payload
+  },
+  [resetIdleTimer]: (state) => {
+    state.resetIdleTime = (new Date()).getTime();
   }
 })

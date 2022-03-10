@@ -1,4 +1,3 @@
-import { mount } from "enzyme"
 import { ThemeProvider } from "styled-components"
 import ChangeLanguage from "../components/ChangeLanguage"
 import { theme } from "../Theme"
@@ -11,9 +10,7 @@ const useSelectorSpy = jest.spyOn(redux, 'useSelector');
 
 describe("Languages", () => {
     beforeEach(() => {
-        useSelectorSpy.mockImplementation(callback => {
-            return callback({ lexClient: { actionType: "Language" } });
-        });
+        useSelectorSpy.mockImplementation(callback => callback({ lexClient: { actionType: "Language" } }));
 
         useDispatchMock.mockReturnValue(dispatchFn);
     })

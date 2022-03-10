@@ -1,5 +1,4 @@
 import Footer from "../components/Footer"
-import { shallow } from "enzyme"
 import { fireEvent, render, screen } from "@testing-library/react"
 import { ACTION_TYPE } from "../helper/enum"
 import * as redux from 'react-redux'
@@ -11,9 +10,7 @@ const spy = jest.spyOn(redux, 'useSelector')
 
 describe("Footer", () => {
 beforeEach(()=>{
-  spy.mockImplementation(callback => {
-    return callback({ lexClient: { actionType: "Language" } });
-  });
+  spy.mockImplementation(callback => callback({ lexClient: { actionType: "Language" } }));
 })
   it("Footer component", () => {
     render(<Footer />);    
@@ -27,9 +24,7 @@ beforeEach(()=>{
   it("Verified action button event fired with expected parameter", () => { 
     jest.clearAllMocks();
     useDispatchMock.mockReturnValue(dispatchFn);
-    spy.mockImplementation(callback => {
-      return callback({ lexClient: { actionType: ACTION_TYPE.DEFAULT } });
-    });
+    spy.mockImplementation(callback => callback({ lexClient: { actionType: ACTION_TYPE.DEFAULT } }));
      render(<Footer />);
     fireEvent.click(screen.getByText("Languages"));
     expect(dispatchFn).toHaveBeenLastCalledWith({ "payload": "Language", "type": "lexClient/setActionType" })
