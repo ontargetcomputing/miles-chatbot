@@ -32,10 +32,9 @@ function Layout() {
       dispatch(leXTextCall(searchTerm))
     }
   }, [lexThread])
-
   return (
-    <>  
-    <IdleTime idleTimeInSeconds={30} warnTimeInSeconds={20} />
+    <>     
+    <IdleTime idleTimeInSeconds={600} warnTimeInSeconds={60} />
       <LayoutWrapper className={!isVisibleChatInput ? "cb-full-height" : ""}>
         {checkActionType ? <ChangeLanguage /> : <ChatMessagesLayout />}
       </LayoutWrapper>

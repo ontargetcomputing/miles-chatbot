@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { MessageText } from './ChatMessagesLayout';
-import { setEndChat } from '../ducks/lexClient';
+import { setActionType, setEndChat } from '../ducks/lexClient';
 import Modal from './Modal';
 import PropTypes from 'prop-types';
+import { ACTION_TYPE } from '../helper/enum';
 
 const message = `Your chat timed out because you didn't 
 respond to the agent. If you'd like more help, 
@@ -13,28 +14,33 @@ const IdleTime = ({ idleTimeInSeconds, warnTimeInSeconds }) => {
     const dispatch = useDispatch();
     const idleChatTimeout = idleTimeInSeconds * 1000;  // 30 sec
     const warnBefore = warnTimeInSeconds * 1000; // 19 sec
-    const { resetIdleTime, chatEnded } = useSelector(store => store.lexClient);
+    const countDownDefaultValue = Math.trunc(warnBefore / 1000);
+
+    const idleTimerRef = useRef();// 30sec
+    const warnIntervalRef = useRef();
+
+    const { resetIdleTime, chatEnded, actionType } = useSelector(store => store.lexClient);
     const { isChatEnded } = chatEnded;
-    const [idleTimerRef, setIdleTimerRef] = useState(null);// 30sec
-    const [warnIntervalRef, setWarnIntervalRef] = useState(null);
-    const [countDown, setCountDown] = useState(Math.trunc(warnBefore / 1000)); // should be in seconds
+
+    const [countDown, setCountDown] = useState(countDownDefaultValue); // should be in seconds
     const [showWarning, setShowWarning] = useState(false);
     const [active, setActive] = useState(true);
 
     useEffect(() => {
         startTimer();
-        window.idleTimerRefs = [];
-        window.warnIntervalRefs = [];
-
+        return () => {
+            idleTimerRef.current && clearInterval(idleTimerRef.current);
+            warnIntervalRef.current && clearInterval(warnIntervalRef.current);
+        };
     }, []);
 
     useEffect(() => {
         if (countDown <= 0) {
             clearAllTimer();
             setActive(false);
-            dispatch(setEndChat({ isChatEnded: true, message }))
             setShowWarning(false);
-            return;
+            dispatch(setEndChat({ isChatEnded: true, message }));
+            actionType === ACTION_TYPE.LANGUAGES && dispatch(setActionType(ACTION_TYPE.DEFAULT));
         }
     }, [countDown])
 
@@ -47,13 +53,9 @@ const IdleTime = ({ idleTimeInSeconds, warnTimeInSeconds }) => {
 
         if (active && !isChatEnded) {
             const timeout = Math.trunc(idleChatTimeout - warnBefore);
-            const timeoutRef = setTimeout(() => {
-                const intervalRef = setInterval(() => setWarningDialog(), 2000);
-                setWarnIntervalRef(intervalRef);
-                window.warnIntervalRefs.push(intervalRef);
+            idleTimerRef.current = setTimeout(() => {
+                warnIntervalRef.current = setInterval(() => setWarningDialog(), 1000);
             }, timeout);
-            setIdleTimerRef(timeoutRef);
-            window.idleTimerRefs.push(timeoutRef);
         }
     }
 
@@ -63,17 +65,10 @@ const IdleTime = ({ idleTimeInSeconds, warnTimeInSeconds }) => {
     }
 
     const clearAllTimer = () => {
-        window.warnIntervalRefs && window.warnIntervalRefs.forEach(warn => clearInterval(warn));
-        window.idleTimerRefs && window.idleTimerRefs.forEach(warn => clearInterval(warn));
-        window.warnIntervalRefs = [];
-        window.idleTimerRefs = [];
-
-        warnIntervalRef && clearInterval(warnIntervalRef);
-        idleTimerRef && clearInterval(idleTimerRef);
+        idleTimerRef.current && clearInterval(idleTimerRef.current);
+        warnIntervalRef.current && clearInterval(warnIntervalRef.current);
         setShowWarning(false);
-        setIdleTimerRef(null);
-        setWarnIntervalRef(null);
-        setCountDown(Math.trunc(warnBefore / 1000))
+        setCountDown(countDownDefaultValue)
     }
 
     const onClose = () => {

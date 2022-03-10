@@ -33,7 +33,7 @@ const App = () => {
   }, [])
 
   return (
-    <Theme>
+    <Theme>       
       <GlobalStyle />
       <Header />
       <Layout />
