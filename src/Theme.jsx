@@ -27,6 +27,9 @@ export const theme = {
     },
     orange: {
     corangedark1: '#C77600'
+    },
+    red:{
+      cred:"#B91818"
     }
   },
 }

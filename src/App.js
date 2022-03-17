@@ -21,8 +21,18 @@ html, body, #root, .content-container{
       width:20px;
 
     }
+
+    .error input{
+      border-color: ${props => props.theme.colors.red.cred};
+    }
   }
-}`
+}
+
+#root{
+  display: flex;
+  flex-flow: column;
+}
+`
 
 const App = () => {
   const dispatch = useDispatch()

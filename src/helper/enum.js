@@ -6,3 +6,15 @@ export const ACTION_TYPE = {
     UPDATE_LANGUAGE_PROVIDER: "Update language provider",
     SELECT_LANGUAGE: "Select Language"
 }
+
+export const  LEXTHREAD_PROPS = {
+    TOPIC: "topic"
+}
+
+export const TOPIC = {
+    LANGUAGE_CHANGED: "language.changed",
+    FIRST_NAME: "liveChat.firstname",
+    LAST_NAME: "liveChat.lastname",
+    EMAIL: "liveChat.emailaddress",
+    PHONE_NUMBER: "liveChat.phonenumber"
+}

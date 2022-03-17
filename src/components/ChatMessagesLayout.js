@@ -4,7 +4,7 @@ import Markdown from 'react-markdown'
 import BotMessage from './BotMessage'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useRef } from 'react'
-import { searchQuery } from '../connectors/lexClient'
+import { botButtonAction } from '../connectors/lexClient'
 import UserMessage from './UserMessage'
 import styled from 'styled-components'
 import PropTypes from 'prop-types';
@@ -30,23 +30,25 @@ img {
 const thumpsup = './assets/images/thums-up.svg'
 const thumpsdown = './assets/images/thums-down.svg'
 
-const RenderMessages = ({ res, hide, lexThreadCount } ) => {
+const RenderMessages = ({ res, hide, lexThreadCount }) => {
+  const { lexThread } = useSelector(store => store.lexClient);
+  const isAgentAvailable = lexThread.length && lexThread[lexThread.length - 1]?.isAgentAvailable;
   const dispatch = useDispatch();
-  return(
+  return (
     <>
-  {res.message && <>
-  <div className='bp-md:w--90 p-10'>
-    <BotMessage>
-       <Markdown linkTarget="_blank">{res.message}</Markdown>
-        </BotMessage>
-    </div>
-   { lexThreadCount > 2 && !hide && <FeedbackSection>
-      <img src={thumpsup} alt="logo" onClick={() => dispatch(leXTextCall('Thumbs up'))}/>
-      <img src={thumpsdown} alt="logo" onClick={() =>  dispatch(leXTextCall('Thumbs down'))}/>
-    </FeedbackSection>} 
+      {res.message && <>
+        <div className='bp-md:w--90 p-10'>
+          <BotMessage>
+            <Markdown linkTarget="_blank">{res.message}</Markdown>
+          </BotMessage>
+        </div>
+        {!isAgentAvailable && lexThreadCount > 2 && !hide && <FeedbackSection>
+          <img src={thumpsup} alt="logo" onClick={() => dispatch(leXTextCall('Thumbs up'))} />
+          <img src={thumpsdown} alt="logo" onClick={() => dispatch(leXTextCall('Thumbs down'))} />
+        </FeedbackSection>}
+      </>
+      }
     </>
-    }
- </>
   )
 }
 
@@ -54,12 +56,12 @@ const RenderMessages = ({ res, hide, lexThreadCount } ) => {
 RenderMessages.propTypes = {
   res: PropTypes.any,
   hide: PropTypes.bool,
-  lexThreadCount:  PropTypes.number
+  lexThreadCount: PropTypes.number
 }
 
 export default function ChatMessagesLayout() {
   const { lexThread, chatEnded } = useSelector(store => store.lexClient);
-  const { isChatEnded , message} = chatEnded
+  const { isChatEnded, message } = chatEnded
   const messagesEndRef = useRef(null);
   const dispatch = useDispatch();
   const scrollToBottom = () => messagesEndRef?.current?.scrollIntoView({ behavior: "smooth" });
@@ -73,14 +75,14 @@ export default function ChatMessagesLayout() {
       {lexThread.map((res, index) =>
         res.type === 'bot' ? (
           <div key={index}>
-            <RenderMessages res={res} hide={disablePrevious(index)} lexThreadCount={lexThreadCount}/>
+            <RenderMessages res={res} hide={disablePrevious(index)} lexThreadCount={lexThreadCount} />
             <ButtonWrapper className='flex'>
               {res.buttons?.map(btn => (
                 <Button
                   disabled={isChatEnded || disablePrevious(index)}
                   key={btn.text}
                   label={btn.text}
-                  onClick={() => dispatch(searchQuery(btn.value))}
+                  onClick={() => dispatch(botButtonAction(btn))}
                 />
               ))}
             </ButtonWrapper>
