@@ -7,7 +7,7 @@ export const ACTION_TYPE = {
     SELECT_LANGUAGE: "Select Language"
 }
 
-export const  LEXTHREAD_PROPS = {
+export const LEXTHREAD_PROPS = {
     TOPIC: "topic"
 }
 
@@ -17,4 +17,8 @@ export const TOPIC = {
     LAST_NAME: "liveChat.lastname",
     EMAIL: "liveChat.emailaddress",
     PHONE_NUMBER: "liveChat.phonenumber"
+}
+
+export const BOT_INQUIRY_OPTIONS = {
+    DRIVER_LICENSE: "Driver License"
 }

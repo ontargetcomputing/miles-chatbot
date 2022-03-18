@@ -6,6 +6,8 @@ export const setActionType = createAction("lexClient/setActionType");
 export const setLanguage = createAction("lexClient/setLanguage");
 export const setEndChat = createAction("lexClient/setEndChat");
 export const resetIdleTimer = createAction("lexClient/resetIdleTimer");
+export const pushMessages = createAction("lexClient/pushMessages")
+export const agentAvailable = createAction("lexClient/agentAvailable")
 
 const initialState = {
   lexThread: [],
@@ -15,7 +17,8 @@ const initialState = {
   chatEnded: {
     isChatEnded: false,
     message: ''
-  }
+  },
+  agentAvailable: false
 }
 
 export default createReducer(initialState, {
@@ -37,5 +40,11 @@ export default createReducer(initialState, {
   },
   [resetIdleTimer]: (state) => {
     state.resetIdleTime = (new Date()).getTime();
+  },
+  [pushMessages]: (state, action) => {
+    state.lexThread = action.payload
+  },
+  [agentAvailable]: (state, action) => {
+    state.agentAvailable = action.payload;
   }
 })

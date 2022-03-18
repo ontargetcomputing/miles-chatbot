@@ -31,8 +31,7 @@ const thumpsup = './assets/images/thums-up.svg'
 const thumpsdown = './assets/images/thums-down.svg'
 
 const RenderMessages = ({ res, hide, lexThreadCount }) => {
-  const { lexThread } = useSelector(store => store.lexClient);
-  const isAgentAvailable = lexThread.length && lexThread[lexThread.length - 1]?.isAgentAvailable;
+  const { agentAvailable } = useSelector(store => store.lexClient);
   const dispatch = useDispatch();
   return (
     <>
@@ -42,7 +41,7 @@ const RenderMessages = ({ res, hide, lexThreadCount }) => {
             <Markdown linkTarget="_blank">{res.message}</Markdown>
           </BotMessage>
         </div>
-        {!isAgentAvailable && lexThreadCount > 2 && !hide && <FeedbackSection>
+        {!agentAvailable && lexThreadCount > 2 && !hide && <FeedbackSection>
           <img src={thumpsup} alt="logo" onClick={() => dispatch(leXTextCall('Thumbs up'))} />
           <img src={thumpsdown} alt="logo" onClick={() => dispatch(leXTextCall('Thumbs down'))} />
         </FeedbackSection>}

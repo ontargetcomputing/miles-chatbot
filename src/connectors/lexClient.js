@@ -1,6 +1,9 @@
 import { Interactions } from 'aws-amplify'
-import { lexPostCall, setLanguage, setActionType, resetIdleTimer } from '../ducks/lexClient'
-import { ACTION_TYPE } from "../helper/enum"
+import { CONFIG } from '../config/config';
+import { lexPostCall, setLanguage, setActionType, resetIdleTimer, pushMessages, agentAvailable } from '../ducks/lexClient'
+import { ACTION_TYPE, BOT_INQUIRY_OPTIONS } from "../helper/enum"
+import { Util } from '../helper/Util';
+import { axiosWithRetry } from './base-service.js/axios-wrapper';
 
 export const leXTextCall = (searchTerm, initialRender = false) => async (dispatch, getState) => {
   try {
@@ -22,7 +25,8 @@ export const leXTextCall = (searchTerm, initialRender = false) => async (dispatc
           : [],
         type: 'bot',
         topic: response?.sessionAttributes?.topic,
-        isAgentAvailable: response?.sessionAttributes.agents_available === "true"
+        isAgentAvailable: response?.sessionAttributes.agents_available === "true",
+        sessionAttributes: response?.sessionAttributes
       },
     ];
 
@@ -78,8 +82,59 @@ export const searchQuery = (query, displayText = "") => (dispatch, getState) => 
 
 export const botButtonAction = buttonItem => (dispatch, getState) => {
   const { lexThread } = getState().lexClient;
-  const isAgentAvailable = lexThread.length && lexThread[lexThread.length - 1]?.isAgentAvailable;
+  const recentThread = lexThread.length && lexThread[lexThread.length - 1];
+  const isAgentAvailable = recentThread?.isAgentAvailable;
+  dispatch(agentAvailable(isAgentAvailable))
 
-  const displayText = isAgentAvailable ? buttonItem.text : "";
+  if (isAgentAvailable && buttonItem.text === BOT_INQUIRY_OPTIONS.DRIVER_LICENSE) {
+    dispatch(createCase(recentThread, buttonItem.text));
+
+    return;
+  } 
+  const displayText = isAgentAvailable &&  buttonItem.text
   dispatch(searchQuery(buttonItem.value, displayText));
+}
+
+export const translator = async (targetLanguage, message) => {
+  const config = {
+    method: 'post',
+    url: `${CONFIG.LIVE_AGENT.ENDPOINT}/translate`,
+    data: { targetLanguage, message },
+  };
+
+  return axiosWithRetry(config);
+
+}
+
+export const createCase = (lexThreadRecentItem, buttonText) => async (dispatch, getState) => {
+  const {  lexThread, language } = getState().lexClient;
+  const data = Util.getCreateCasePayload(lexThreadRecentItem, language, buttonText);
+
+  if (data) {
+    const createCaseConfig = {
+      method: 'post',
+      url: `${CONFIG.LIVE_AGENT.ENDPOINT}/createCase`,
+      data
+    };
+
+    const result = await axiosWithRetry(createCaseConfig);
+    if (result.status === 200) {
+      const casenumber = result.data[0].outputValues.var_CaseNumber
+        const msg = `Thank you for contacting us. We have logged case number ${casenumber} for your inquiry.  Please wait for the next available agent.`
+      const message = await translator(language, msg);
+      const newThread = [
+        ...lexThread,
+        {
+          message: message?.data?.translation,
+          type: 'bot'
+        },
+      ];
+      dispatch(pushMessages(newThread))
+      // console.log(result);
+      // console.log('waitingMessage', translator2)
+    }
+
+  } else {
+    //TODO show error message
+  }
 }
