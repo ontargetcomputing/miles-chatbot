@@ -27,4 +27,26 @@ export class Util {
         }
         return null;
     }
+
+    static parseCreateCaseResponse(response) {
+        let data = null;
+        if (response.length) {
+            const { actionName, isSuccess, outputValues } = response[0];
+            data = { actionName, isSuccess }
+
+            if (outputValues) {
+                const { var_CaseId: caseId, var_CaseNumber: caseNumber, var_Contact: contact } = outputValues;
+
+                data = { ...data, caseId, caseNumber, contact }
+            }
+        }
+
+        return data;
+    }
+
+    static stringFormat(data, ...args) {
+        return data.replace(/{([0-9]+)}/g, function (match, index) {
+            return typeof args[index] === 'undefined' ? match : args[index];
+        });
+    }
 }

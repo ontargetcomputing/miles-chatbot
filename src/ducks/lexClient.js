@@ -32,7 +32,6 @@ export default createReducer(initialState, {
     state.actionType = action.payload;
   },
   [setLanguage]: (state, action) => {
-
     state.language = action.payload;
   },
   [setEndChat]: (state, action) => {
