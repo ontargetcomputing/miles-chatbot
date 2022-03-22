@@ -22,7 +22,8 @@ export const leXTextCall = (searchTerm, initialRender = false) => async (dispatc
           : [],
         type: 'bot',
         topic: response?.sessionAttributes?.topic,
-        isAgentAvailable: response?.sessionAttributes.agents_available === "true"
+        isAgentAvailable: response?.sessionAttributes.agents_available === "true",
+        date: new Date()
       },
     ];
 
@@ -70,6 +71,7 @@ export const searchQuery = (query, displayText = "") => (dispatch, getState) => 
   const value = {
     type: 'human',
     message: displayText || query,
+    date: new Date()
   }
   const newThread = [...lexThread, value]
   dispatch(lexPostCall(newThread));
