@@ -28,14 +28,54 @@ const endText = "You've ended the Chat."
 
 function Footer() {
   const dispatch = useDispatch();
-  const { actionType, language, chatEnded } = useSelector(store => store.lexClient);
+  const { actionType, language, chatEnded, lexThread } = useSelector(store => store.lexClient);
+  
   const { isChatEnded } = chatEnded
+
+  const handleSaveChat = () =>{
+    
+
+    let myFinalText = "";
+
+    lexThread.map(i => {
+      if (i.type === "bot" && i.topic !== 'language.changed') {
+        myFinalText =
+          `${myFinalText 
+          }\r\n` +
+          ` ` +
+          `\r` +
+          `Miles (${ 
+          i.date 
+          }):${ 
+          i.message}`;
+      } else if (i.type === "human" || i.type === "feedback") {
+        myFinalText =
+          `${myFinalText  }\r\n` + ` ` + `\r` + `Me (${  i.date  }):${  i.message}`;
+      } else if (i.type === "humanClickedButton") {
+        myFinalText =
+          `${myFinalText 
+          }\r\n` +
+          ` ` +
+          `\r` +
+          `Me (${ 
+          i.date 
+          }):${ 
+          i.buttonText}`;
+      }
+    });
+    let link = document.createElement("a");
+    link.href = `data:text/plain;charset=UTF-8,${  escape(myFinalText)}`;
+    link.download = "transcript.txt";
+    link.click();
+  }
+    
 
   return (
     <FooterContainer className='flex flex--nowrap flex--align-center flex--justify-content-start'>
       {ACTION_TYPE.LANGUAGES !== actionType &&
         <>
           <Button
+          onClick={() => handleSaveChat()}
             label={resource(language, "saveChat")}
             btnStyle={BUTTON_STYLE_SECONDARY}
             buttonClass='cb-button'
