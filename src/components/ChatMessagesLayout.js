@@ -2,6 +2,7 @@
 import Button from './Button'
 import Markdown from 'react-markdown'
 import BotMessage from './BotMessage'
+import { BOT_TYPE } from '../helper/enum'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useRef } from 'react'
 import { botButtonAction } from '../connectors/lexClient'
@@ -37,7 +38,7 @@ const RenderMessages = ({ res, hide, lexThreadCount }) => {
     <>
       {res.message && <>
         <div className='bp-md:w--90 p-10'>
-          <BotMessage>
+          <BotMessage type={res.type}> 
             <Markdown linkTarget="_blank">{res.message}</Markdown>
           </BotMessage>
         </div>
@@ -72,7 +73,7 @@ export default function ChatMessagesLayout() {
   return (
     <>
       {lexThread.map((res, index) =>
-        res.type === 'bot' ? (
+        (res.type === BOT_TYPE.BOT || res.type === BOT_TYPE.AGENT) ? (
           <div key={index}>
             <RenderMessages res={res} hide={disablePrevious(index)} lexThreadCount={lexThreadCount} />
             <ButtonWrapper className='flex'>

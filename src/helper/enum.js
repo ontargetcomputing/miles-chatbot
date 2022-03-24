@@ -22,3 +22,21 @@ export const TOPIC = {
 export const BOT_INQUIRY_OPTIONS = {
     DRIVER_LICENSE: "Driver License"
 }
+
+export const BOT_TYPE = {
+    HUMAN: 'human',
+    AGENT: 'agent',
+    BOT: 'bot'
+}
+
+export const LIVECHAT_STATUS = {
+    STARTING: "starting",
+    REQUESTED: "requested",
+    INITIALIZING: "initializing",
+    ENTERING_TOPIC: "entering_topic",
+    CREATING_CASE: "creating_case",
+    CONNECTING: "connecting",
+    ESTABLISHED: "established",
+    DISCONNECTED: "disconnected",
+    ENDED: "ended"
+  };

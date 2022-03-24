@@ -1,5 +1,5 @@
 import { createReducer, createAction } from '@reduxjs/toolkit';
-import { ACTION_TYPE } from '../helper/enum';
+import { ACTION_TYPE, LIVECHAT_STATUS } from '../helper/enum';
 export const lexPostCall = createAction('lexClient/lexPostCall');
 export const setSearchTerm = createAction('lexClient/setSearchTerm');
 export const setActionType = createAction("lexClient/setActionType");
@@ -8,7 +8,7 @@ export const setEndChat = createAction("lexClient/setEndChat");
 export const resetIdleTimer = createAction("lexClient/resetIdleTimer");
 export const pushMessages = createAction("lexClient/pushMessages")
 export const agentAvailable = createAction("lexClient/agentAvailable")
-
+export const setliveChat = createAction("lexClient/agentAvailable")
 const initialState = {
   lexThread: [],
   searchTerm: 'QID::Welcome',
@@ -18,7 +18,8 @@ const initialState = {
     isChatEnded: false,
     message: ''
   },
-  agentAvailable: false
+  agentAvailable: false,
+  liveChat: { status: LIVECHAT_STATUS.DISCONNECTED }
 }
 
 export default createReducer(initialState, {
@@ -45,5 +46,12 @@ export default createReducer(initialState, {
   },
   [agentAvailable]: (state, action) => {
     state.agentAvailable = action.payload;
+  },
+  [setliveChat]: (state, action) => {
+    if (action?.payload) {
+      state.liveChat = action.payload;
+    } else {
+      state.liveChat = { status: LIVECHAT_STATUS.DISCONNECTED };
+    }
   }
 })
