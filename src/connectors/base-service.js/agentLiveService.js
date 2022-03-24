@@ -1,7 +1,6 @@
 import { CONFIG } from "../../config/config";
 import { axiosWithRetry } from "./axios-wrapper";
 
-
 export class ConstructPayload {
     static sessionPayload(session) {
         session = {

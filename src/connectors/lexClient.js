@@ -9,6 +9,7 @@ import {
   agentAvailable,
   setEndChat,
   setliveChat,
+  setSessionData
 } from '../ducks/lexClient'
 import { ACTION_TYPE, BOT_INQUIRY_OPTIONS, BOT_TYPE, LIVECHAT_STATUS } from '../helper/enum'
 import { Util } from '../helper/Util'
@@ -81,16 +82,21 @@ export const changeLanguage = language => async dispatch => {
 
 export const searchQuery =
   (query, displayText = '') =>
-    (dispatch, getState) => {
-      const { lexThread, language } = getState().lexClient
+    async (dispatch, getState) => {
+      const { lexThread, language, liveChat, sessionData } = getState().lexClient
       const value = {
         type: 'human',
         message: displayText || query,
         language
       }
       const newThread = [...lexThread, value]
+      if(liveChat.status === LIVECHAT_STATUS.ESTABLISHED){
+       const data = await sendMessage(language, sessionData, query)
+       data.status === 200 ? dispatch(pushMessages(newThread)) : null
+      } else {
       dispatch(lexPostCall(newThread))
       dispatch(leXTextCall(query))
+      }
     }
 
 export const botButtonAction = buttonItem => (dispatch, getState) => {
@@ -131,21 +137,20 @@ export const updateLexThread =
 
 const getMessage = (service, payload) => async (dispatch, getState) => {
   const { liveChat } = getState().lexClient;
-  let liveChatStatus = liveChat?.status;
   try {
     const response = await service.getMessage(payload);
     const joinedMsg = await translator(payload.targetLanguage, CONFIG.LIVE_AGENT.HAS_JOINED)?.data?.translation || CONFIG.LIVE_AGENT.HAS_JOINED;
 
     const chatRequestSuccess = async () => {
-      // context.dispatch('pushLiveChatMessage', {
-      //   type: 'bot',
-      //   text: establishedMsg,
-      // }); 
-      liveChatStatus = LIVECHAT_STATUS.ESTABLISHED;
       const responseConnectionEstablished = await translator(payload.targetLanguage, CONFIG.LIVE_AGENT.LIVE_CHAT_CONNECTION)
       dispatch(updateLexThread(responseConnectionEstablished.data?.translation));
-      dispatch(setliveChat({ ...liveChat, status: liveChatStatus }));
     }
+
+    const ChatEstablished = async (element) => {
+      dispatch(setliveChat({ ...liveChat, status: LIVECHAT_STATUS.ESTABLISHED }));
+      dispatch(updateLexThread(`${element.message.name} ${joinedMsg}`))
+    }
+
 
     const chatMessage = (data) => {
       const cookedText = Util.convertLinks(data.message.text)
@@ -166,7 +171,7 @@ const getMessage = (service, payload) => async (dispatch, getState) => {
           await chatRequestSuccess();
           break;
         case 'ChatEstablished':
-          dispatch(updateLexThread(`${element.message.name} ${joinedMsg}`))
+            ChatEstablished(element)
           break;
         case 'ChatMessage':
           chatMessage(element);
@@ -184,7 +189,7 @@ const getMessage = (service, payload) => async (dispatch, getState) => {
         //   agentNotTyping(element);
         //   break;
         case 'ChatEnded':
-          dispatch(setEndChat({ isChatEnded: true, message: "You've ended the Chat." }))
+          dispatch(setEndChat({ isChatEnded: true, message: "Agent has ended the session"}))
           break;
        case 'ChatRequestFail':
         dispatch(updateLexThread('Unable to connect with an agent.'))
@@ -247,6 +252,7 @@ export const createCase = actionType => async (dispatch, getState) => {
               targetLanguage: language
 
             }
+            dispatch(setSessionData(payload))
             await dispatch(getMessage(service, payload));
           }
         }
@@ -276,4 +282,13 @@ export const createCase = actionType => async (dispatch, getState) => {
   } else {
     dispatch(setliveChat(null));
   }
+}
+
+export const sendMessage = async(language, session, message) => {
+  const config = {
+    method: 'post',
+    url: `${CONFIG.LIVE_AGENT.ENDPOINT}/sendMessage`,
+    data: { ...session, sourceLanguage: language, message },
+  }
+  return axiosWithRetry(config)
 }
