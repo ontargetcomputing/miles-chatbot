@@ -19,9 +19,7 @@ export const TOPIC = {
     PHONE_NUMBER: "liveChat.phonenumber"
 }
 
-export const BOT_INQUIRY_OPTIONS = {
-    DRIVER_LICENSE: "Driver License"
-}
+export const BOT_INQUIRY_OPTIONS = ["Driver License", "Real ID", "Vehicle Registration", "Other"]
 
 export const BOT_TYPE = {
     HUMAN: 'human',
@@ -40,3 +38,9 @@ export const LIVECHAT_STATUS = {
     DISCONNECTED: "disconnected",
     ENDED: "ended"
   };
+
+  export const END_CHAT_MESSAGES = {
+      AFTER_CONNECTION: 'Session Ended',
+      END_CHAT: `You've ended the Chat.`,
+      END_CHAT_TIMEOUT: `Your chat timed out because you didn't respond to the agent. If you'd like more help, please start a new chat.`
+  }

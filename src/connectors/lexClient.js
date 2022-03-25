@@ -6,15 +6,17 @@ import {
   setActionType,
   resetIdleTimer,
   pushMessages,
-  agentAvailable,
+  // agentAvailable,
   setEndChat,
   setliveChat,
   setSessionData
 } from '../ducks/lexClient'
-import { ACTION_TYPE, BOT_INQUIRY_OPTIONS, BOT_TYPE, LIVECHAT_STATUS } from '../helper/enum'
-import { Util } from '../helper/Util'
+import { ACTION_TYPE, BOT_INQUIRY_OPTIONS, BOT_TYPE, LIVECHAT_STATUS, END_CHAT_MESSAGES } from '../helper/enum'
+import { Util, convertLinks } from '../helper/Util'
 import { AgentLiveService, ConstructPayload } from './base-service.js/agentLiveService'
 import { axiosWithRetry } from './base-service.js/axios-wrapper'
+
+const service = new AgentLiveService()
 
 export const leXTextCall =
   (searchTerm, initialRender = false) =>
@@ -91,7 +93,7 @@ export const searchQuery =
       }
       const newThread = [...lexThread, value]
       if(liveChat.status === LIVECHAT_STATUS.ESTABLISHED){
-       const data = await sendMessage(language, sessionData, query)
+       const data = await service.sendMessage(language, sessionData, query)
        data.status === 200 ? dispatch(pushMessages(newThread)) : null
       } else {
       dispatch(lexPostCall(newThread))
@@ -103,11 +105,9 @@ export const botButtonAction = buttonItem => (dispatch, getState) => {
   const { lexThread } = getState().lexClient
   const recentThread = lexThread.length && lexThread[lexThread.length - 1]
   const isAgentAvailable = recentThread?.isAgentAvailable
-  dispatch(agentAvailable(isAgentAvailable))
-
   if (
     isAgentAvailable &&
-    buttonItem.text === BOT_INQUIRY_OPTIONS.DRIVER_LICENSE
+    BOT_INQUIRY_OPTIONS.includes(buttonItem.text)
   ) {
     dispatch(createCase(buttonItem.text))
 
@@ -136,7 +136,8 @@ export const updateLexThread =
   }
 
 const getMessage = (service, payload) => async (dispatch, getState) => {
-  const { liveChat } = getState().lexClient;
+  const { liveChat, chatEnded } = getState().lexClient;
+  const { isChatEnded } = chatEnded
   try {
     const response = await service.getMessage(payload);
     const joinedMsg = await translator(payload.targetLanguage, CONFIG.LIVE_AGENT.HAS_JOINED)?.data?.translation || CONFIG.LIVE_AGENT.HAS_JOINED;
@@ -153,14 +154,7 @@ const getMessage = (service, payload) => async (dispatch, getState) => {
 
 
     const chatMessage = (data) => {
-      const cookedText = Util.convertLinks(data.message.text)
-      // const newLexThread = {
-      //   type: data.type,
-      //   message: cookedText,
-      //   alts: {
-      //     markdown: cookedText,
-      //   },
-      // }
+      const cookedText = convertLinks(data.message.text)
       dispatch(updateLexThread(cookedText, BOT_TYPE.AGENT));
     }
 
@@ -193,10 +187,9 @@ const getMessage = (service, payload) => async (dispatch, getState) => {
           break;
        case 'ChatRequestFail':
         dispatch(updateLexThread('Unable to connect with an agent.'))
-        //  dispatch(setliveChat({ status: LIVECHAT_STATUS.DISCONNECTED }));
           break;
-        // default:
-        //   console.error(`Unknown message type:${type}`)
+        default:
+          console.error(`Unknown message type:${element.type}`)
       }
     });
 
@@ -205,7 +198,7 @@ const getMessage = (service, payload) => async (dispatch, getState) => {
   } finally {
     // await sleep(CONFIG.LIVE_AGENT.SALESFORCE_POLLING_INTERVAL);
     if (liveChat.status === LIVECHAT_STATUS.CONNECTING ||
-      liveChat.status === LIVECHAT_STATUS.ESTABLISHED) {
+      liveChat.status === LIVECHAT_STATUS.ESTABLISHED && !isChatEnded) {
       setTimeout(() => dispatch(getMessage(service, payload)), CONFIG.LIVE_AGENT.SALESFORCE_POLLING_INTERVAL);
     }
   }
@@ -214,7 +207,6 @@ const getMessage = (service, payload) => async (dispatch, getState) => {
 export const createCase = actionType => async (dispatch, getState) => {
   const { language, lexThread } = getState().lexClient
   const recentThread = lexThread.length && lexThread[lexThread.length - 1]
-  const service = new AgentLiveService()
   const casePayload = Util.getCreateCasePayload(
     recentThread,
     language,
@@ -284,11 +276,12 @@ export const createCase = actionType => async (dispatch, getState) => {
   }
 }
 
-export const sendMessage = async(language, session, message) => {
-  const config = {
-    method: 'post',
-    url: `${CONFIG.LIVE_AGENT.ENDPOINT}/sendMessage`,
-    data: { ...session, sourceLanguage: language, message },
-  }
-  return axiosWithRetry(config)
+export const endChat = () => async (dispatch, getState) => {
+const { sessionData } = getState().lexClient
+if(Object.keys(sessionData).length){
+const result = await service.endChat(sessionData)
+result.status === 200 && dispatch(setEndChat({ isChatEnded: true, message: END_CHAT_MESSAGES.AFTER_CONNECTION }))
+} else {
+  dispatch(setEndChat({ isChatEnded: true, message: END_CHAT_MESSAGES.END_CHAT }))
+}
 }

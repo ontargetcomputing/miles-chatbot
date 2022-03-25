@@ -4,11 +4,11 @@ import { MessageText } from "./ChatMessagesLayout"
 import { setActionType, setEndChat } from "../ducks/lexClient"
 import Modal from "./Modal"
 import PropTypes from "prop-types"
-import { ACTION_TYPE } from "../helper/enum"
+import { ACTION_TYPE,  END_CHAT_MESSAGES } from "../helper/enum"
 
-const message = `Your chat timed out because you didn't 
-respond to the agent. If you'd like more help, 
-please start a new chat.`
+// const message = `Your chat timed out because you didn't 
+// respond to the agent. If you'd like more help, 
+// please start a new chat.`
 
 const IdleTime = ({ idleTimeInSeconds, warnTimeInSeconds }) => {
   const dispatch = useDispatch()
@@ -39,7 +39,7 @@ const IdleTime = ({ idleTimeInSeconds, warnTimeInSeconds }) => {
       clearAllTimer()
       setActive(false)
       setShowWarning(false)
-      dispatch(setEndChat({ isChatEnded: true, message }))
+      dispatch(setEndChat({ isChatEnded: true, message: END_CHAT_MESSAGES.END_CHAT_TIMEOUT }))
       actionType === ACTION_TYPE.LANGUAGES && dispatch(setActionType(ACTION_TYPE.DEFAULT))
     }
   }, [countDown])

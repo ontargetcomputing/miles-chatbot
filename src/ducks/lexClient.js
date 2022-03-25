@@ -40,6 +40,8 @@ export default createReducer(initialState, {
   },
   [setEndChat]: (state, action) => {
     state.chatEnded = action.payload
+    state.sessionData = {},
+    state.liveChat = { status: LIVECHAT_STATUS.DISCONNECTED }
   },
   [resetIdleTimer]: (state) => {
     state.resetIdleTime = (new Date()).getTime();

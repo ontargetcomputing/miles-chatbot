@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 export class Util {
     static getPropsFromArray(props, array, hasFetchFromLast = true, index = 0) {
         if (array?.length) {
@@ -49,18 +50,17 @@ export class Util {
             return typeof args[index] === 'undefined' ? match : args[index];
         });
     }
-
-    static convertLinks = (text) => 
-        // // const regex = new RegExp("((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)", 'sg');
-        // const regex="";
-        // let cookedText = text.replace(/~!/g, '[').replace(/!~/g, ']')
-        // let m;
-        // while ((m = regex.exec(cookedText)) !== null) {
-        //   console.log(`Matched ${m[0]}`)
-        //   cookedText = cookedText.replace(m[0], `(${m[0]})`)
-        // }
-        // return cookedText
-    //   }
-     text
-    
 }
+
+
+
+
+export const convertLinks = (text) => {
+    const regex = new RegExp(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/, 'sg');
+    let cookedText = text.replace(/~!/g, '[').replace(/!~/g, ']')
+    let m;
+    while ((m = regex.exec(cookedText)) !== null) {
+      cookedText = cookedText.replace(m[0], `(${m[0]})`)
+    }
+    return cookedText
+  }

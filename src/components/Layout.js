@@ -9,6 +9,7 @@ import ChatMessagesLayout from "./ChatMessagesLayout"
 import { leXTextCall } from "../connectors/lexClient"
 import IdleTime from "./Idle"
 import { Util } from "../helper/Util"
+import { agentAvailable } from "../ducks/lexClient"
 
 const LayoutWrapper = styled.div`
   padding: 2rem;
@@ -28,10 +29,13 @@ function Layout() {
   const isVisibleChatInput = !checkActionType && !isChatEnded
 
   useEffect(() => {
-    // const topicChanged = lexThread.length && lexThread[lexThread.length - 1]?.topic === 'language.changed'
     const topicChanged = Util.getPropsFromArray(LEXTHREAD_PROPS.TOPIC, lexThread) === TOPIC.LANGUAGE_CHANGED
+    const liveChatTopic =  Util.getPropsFromArray(LEXTHREAD_PROPS.TOPIC, lexThread) === 'liveChatStatus.starting'
+
     if (topicChanged) {
       dispatch(leXTextCall(searchTerm))
+    } else if(liveChatTopic){
+      dispatch(agentAvailable(true))
     }
   }, [lexThread])
 

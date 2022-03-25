@@ -82,4 +82,22 @@ export class AgentLiveService {
 
         return axiosWithRetry(config);
     }
+
+    async sendMessage(language, session, message){
+        const config = {
+            method: 'post',
+            url: `${CONFIG.LIVE_AGENT.ENDPOINT}/sendMessage`,
+            data: { ...session, sourceLanguage: language, message },
+          }
+          return axiosWithRetry(config)
+    }
+
+    async endChat(data){
+        const config = {
+            method: 'post',
+            url: `${CONFIG.LIVE_AGENT.ENDPOINT}/endChat`,
+            data,
+          }
+          return axiosWithRetry(config)
+    }
 }

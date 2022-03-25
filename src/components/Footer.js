@@ -2,9 +2,11 @@ import { BUTTON_STYLE_SECONDARY } from '@ca-dmv/core'
 import Button from './Button'
 import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
-import { setActionType, setEndChat } from '../ducks/lexClient'
+import { setActionType } from '../ducks/lexClient'
 import { ACTION_TYPE } from '../helper/enum'
 import { Locale } from "../locale/locale";
+import { endChat } from '../connectors/lexClient'
+import { LIVECHAT_STATUS } from '../helper/enum'
 
 const resource = (languageCode, key) => {
   const stringResource = Locale[languageCode] || Locale["en"];
@@ -24,13 +26,11 @@ const FooterContainer = styled.div`
   }
 `
 
-const endText = "You've ended the Chat."
-
 function Footer() {
   const dispatch = useDispatch();
-  const { actionType, language, chatEnded } = useSelector(store => store.lexClient);
+  const { actionType, language, chatEnded, liveChat } = useSelector(store => store.lexClient);
   const { isChatEnded } = chatEnded
-
+  const { status } = liveChat
   return (
     <FooterContainer className='flex flex--nowrap flex--align-center flex--justify-content-start'>
       {ACTION_TYPE.LANGUAGES !== actionType &&
@@ -45,10 +45,10 @@ function Footer() {
               label={resource(language, "language")}
               btnStyle={BUTTON_STYLE_SECONDARY}
               buttonClass='cb-button'
-              disabled={isChatEnded}
+              disabled={isChatEnded || status === LIVECHAT_STATUS.ESTABLISHED}
             />
             <Button
-              onClick={() => dispatch(setEndChat({ isChatEnded: true, message: endText }))}
+              onClick={() => dispatch(endChat())}
               label={resource(language, "endChat")}
               btnStyle={BUTTON_STYLE_SECONDARY}
               buttonClass='cb-button'
