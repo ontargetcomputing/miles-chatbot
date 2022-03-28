@@ -47,6 +47,7 @@ export const leXTextCall =
             isAgentAvailable:
               response?.sessionAttributes.agents_available === 'true',
             sessionAttributes: response?.sessionAttributes,
+            date: new Date()
           },
         ]
 
@@ -89,7 +90,8 @@ export const searchQuery =
       const value = {
         type: 'human',
         message: displayText || query,
-        language
+        language,
+        date: new Date()
       }
       const newThread = [...lexThread, value]
       if(liveChat.status === LIVECHAT_STATUS.ESTABLISHED){
