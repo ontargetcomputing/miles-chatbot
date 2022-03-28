@@ -101,7 +101,7 @@ export const searchQuery =
       }
     }
 
-export const botButtonAction = buttonItem => (dispatch, getState) => {
+export const botButtonAction = (buttonItem) => (dispatch, getState) => {
   const { lexThread } = getState().lexClient
   const recentThread = lexThread.length && lexThread[lexThread.length - 1]
   const isAgentAvailable = recentThread?.isAgentAvailable
@@ -113,7 +113,7 @@ export const botButtonAction = buttonItem => (dispatch, getState) => {
 
     return
   }
-  const displayText = isAgentAvailable && buttonItem.text
+  const displayText = isAgentAvailable ?  buttonItem.text : buttonItem.text
   dispatch(searchQuery(buttonItem.value, displayText))
 }
 
