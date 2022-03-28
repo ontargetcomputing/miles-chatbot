@@ -2,6 +2,7 @@
 import Button from './Button'
 import Markdown from 'react-markdown'
 import BotMessage from './BotMessage'
+import { BOT_TYPE } from '../helper/enum'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useRef } from 'react'
 import { botButtonAction } from '../connectors/lexClient'
@@ -31,18 +32,17 @@ const thumpsup = './assets/images/thums-up.svg'
 const thumpsdown = './assets/images/thums-down.svg'
 
 const RenderMessages = ({ res, hide, lexThreadCount }) => {
-  const { lexThread } = useSelector(store => store.lexClient);
-  const isAgentAvailable = lexThread.length && lexThread[lexThread.length - 1]?.isAgentAvailable;
+  const { agentAvailable } = useSelector(store => store.lexClient);
   const dispatch = useDispatch();
   return (
     <>
       {res.message && <>
         <div className='bp-md:w--90 p-10'>
-          <BotMessage>
+          <BotMessage type={res.type}> 
             <Markdown linkTarget="_blank">{res.message}</Markdown>
           </BotMessage>
         </div>
-        {!isAgentAvailable && lexThreadCount > 2 && !hide && <FeedbackSection>
+        {!agentAvailable && lexThreadCount > 2 && !hide && <FeedbackSection>
           <img src={thumpsup} alt="logo" onClick={() => dispatch(leXTextCall('Thumbs up'))} />
           <img src={thumpsdown} alt="logo" onClick={() => dispatch(leXTextCall('Thumbs down'))} />
         </FeedbackSection>}
@@ -73,7 +73,7 @@ export default function ChatMessagesLayout() {
   return (
     <>
       {lexThread.map((res, index) =>
-        res.type === 'bot' ? (
+        (res.type === BOT_TYPE.BOT || res.type === BOT_TYPE.AGENT) ? (
           <div key={index}>
             <RenderMessages res={res} hide={disablePrevious(index)} lexThreadCount={lexThreadCount} />
             <ButtonWrapper className='flex'>
