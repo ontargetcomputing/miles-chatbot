@@ -36,7 +36,7 @@ function ChatInput() {
   const [errorMsg, setErrorMsg] = useState("");
   const [showError, setShowError] = useState(true);
   const [term, setSearchTerm] = useState('');
-  const { lexThread } = useSelector(store => store.lexClient);
+  const { lexThread, isLoading } = useSelector(store => store.lexClient);
   const [lexTopic, setTopic] = useState("");
   const pattern = {
     [TOPIC.PHONE_NUMBER]: '[0-9]*'
@@ -112,7 +112,7 @@ function ChatInput() {
   const onChange = data => setSearchTerm(data)
 
   return (
-    <form onSubmit={e => handleSubmit(e)}>
+    <form onSubmit={e => handleSubmit(e)} >
       <StartHereWrapper className={`flex flex--align-start ${errorMsg && showError ? "bot-error" : ""}`}>
         <InputText
           pattern={pattern[lexTopic] || null}
@@ -126,7 +126,7 @@ function ChatInput() {
           containerClass="cb-input-container"
         />
         <Button
-          disabled={errorMsg ? true : false}
+          disabled={errorMsg || isLoading}
           isSubmit
           label='Start'
           btnStyle={BUTTON_STYLE_PRIMARY}

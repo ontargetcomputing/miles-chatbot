@@ -32,10 +32,18 @@ html, body, #root, .content-container{
   display: flex;
   flex-flow: column;
 }
+
+.cb-disabled {
+  input, button, a{
+    opacity:0.5;
+    user-select: none;    
+    pointer-events: none;
+  }
+}
 `
 
 const App = () => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const language = 'English'

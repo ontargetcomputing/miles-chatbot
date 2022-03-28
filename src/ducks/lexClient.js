@@ -6,12 +6,15 @@ export const setActionType = createAction("lexClient/setActionType");
 export const setLanguage = createAction("lexClient/setLanguage");
 export const setEndChat = createAction("lexClient/setEndChat");
 export const resetIdleTimer = createAction("lexClient/resetIdleTimer");
-export const pushMessages = createAction("lexClient/pushMessages")
-export const agentAvailable = createAction("lexClient/agentAvailable")
-export const setliveChat = createAction("lexClient/setliveChat")
-export const setSessionData =  createAction("lexClient/setSessionData")
+export const pushMessages = createAction("lexClient/pushMessages");
+export const agentAvailable = createAction("lexClient/agentAvailable");
+export const setliveChat = createAction("lexClient/setliveChat");
+export const setSessionData = createAction("lexClient/setSessionData");
+export const setIsLoading = createAction("lexClient/setIsLoading");
+export const setIsAgentTyping = createAction("lexClient/setIsAgentTyping");
 
 const initialState = {
+  isLoading: false,
   lexThread: [],
   searchTerm: 'QID::Welcome',
   actionType: ACTION_TYPE.DEFAULT,
@@ -21,6 +24,7 @@ const initialState = {
     message: ''
   },
   agentAvailable: false,
+  isAgentTyping: false,
   liveChat: { status: LIVECHAT_STATUS.DISCONNECTED },
   sessionData: {}
 }
@@ -41,7 +45,7 @@ export default createReducer(initialState, {
   [setEndChat]: (state, action) => {
     state.chatEnded = action.payload
     state.sessionData = {},
-    state.liveChat = { status: LIVECHAT_STATUS.DISCONNECTED }
+      state.liveChat = { status: LIVECHAT_STATUS.DISCONNECTED }
   },
   [resetIdleTimer]: (state) => {
     state.resetIdleTime = (new Date()).getTime();
@@ -61,5 +65,11 @@ export default createReducer(initialState, {
   },
   [setSessionData]: (state, action) => {
     state.sessionData = action.payload
+  },
+  [setIsLoading]: (state, action) => {
+    state.isLoading = action.payload
+  },
+  [setIsAgentTyping]: (state, action) => {
+    state.isAgentTyping = action.payload
   }
 })
