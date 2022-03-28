@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import styled from "styled-components"
 import { useEffect } from "react"
 import { useDispatch } from "react-redux"
@@ -10,6 +11,7 @@ import { leXTextCall } from "../connectors/lexClient"
 import IdleTime from "./Idle"
 import { Util } from "../helper/Util"
 import { agentAvailable } from "../ducks/lexClient"
+import { Loading } from '@ca-dmv/core';
 
 const LayoutWrapper = styled.div`
   padding: 2rem;
@@ -23,28 +25,29 @@ const LayoutWrapper = styled.div`
 
 function Layout() {
   const dispatch = useDispatch()
-  const { actionType, lexThread, chatEnded, searchTerm } = useSelector((store) => store.lexClient)
+  const { actionType, lexThread, chatEnded, searchTerm, isLoading, isAgentTyping } = useSelector((store) => store.lexClient)
   const { isChatEnded } = chatEnded
   const checkActionType = actionType === ACTION_TYPE.LANGUAGES
   const isVisibleChatInput = !checkActionType && !isChatEnded
-
+  const isShowLoading=isLoading||isAgentTyping;
   useEffect(() => {
     const topicChanged = Util.getPropsFromArray(LEXTHREAD_PROPS.TOPIC, lexThread) === TOPIC.LANGUAGE_CHANGED
-    const liveChatTopic =  Util.getPropsFromArray(LEXTHREAD_PROPS.TOPIC, lexThread) === 'liveChatStatus.starting'
+    const liveChatTopic = Util.getPropsFromArray(LEXTHREAD_PROPS.TOPIC, lexThread) === 'liveChatStatus.starting'
 
     if (topicChanged) {
       dispatch(leXTextCall(searchTerm))
-    } else if(liveChatTopic){
+    } else if (liveChatTopic) {
       dispatch(agentAvailable(true))
     }
   }, [lexThread])
-
   return (
     <>
       <IdleTime idleTimeInSeconds={600} warnTimeInSeconds={60} />
-      <LayoutWrapper className={!isVisibleChatInput ? "cb-full-height" : ""}>
+      <LayoutWrapper className={isLoading ? "cb-disabled" : ""}>
         {checkActionType ? <ChangeLanguage /> : <ChatMessagesLayout />}
+        {isShowLoading&& <Loading loadingText={isAgentTyping?"Agent is typing...": "Loading..."}/>}
       </LayoutWrapper>
+
       {isVisibleChatInput && <ChatInput />}
     </>
   )

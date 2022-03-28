@@ -28,72 +28,70 @@ const FooterContainer = styled.div`
 
 function Footer() {
   const dispatch = useDispatch();
-  const { actionType, language, chatEnded, lexThread, liveChat } = useSelector(store => store.lexClient);
+  const { actionType, language, chatEnded, liveChat, isLoading, lexThread } = useSelector(store => store.lexClient);
+  const { isChatEnded } = chatEnded || isLoading;
+  const { status } = liveChat
+  
+  const handleSaveChat = () =>{
 
-   const { isChatEnded } = chatEnded
-   const { status } = liveChat
 
-   const handleSaveChat = () =>{
+    let myFinalText = "";
 
-
-     let myFinalText = "";
-
-     lexThread.map(i => {
-       if (i.type === "bot" && i.topic !== 'language.changed') {
-         myFinalText =
-           `${myFinalText 
-           }\r\n` +
-           ` ` +
-           `\r` +
-           `Miles (${ 
-           i.date 
-           }):${ 
-           i.message}`;
-       } else if (i.type === "human" || i.type === "feedback") {
-         myFinalText =
-           `${myFinalText  }\r\n` + ` ` + `\r` + `Me (${  i.date  }):${  i.message}`;
-       } else if (i.type === "humanClickedButton") {
-         myFinalText =
-           `${myFinalText 
-           }\r\n` +
-           ` ` +
-           `\r` +
-           `Me (${ 
-           i.date 
-           }):${ 
-           i.buttonText}`;
-       }
-     });
-     let link = document.createElement("a");
-     link.href = `data:text/plain;charset=UTF-8,${  escape(myFinalText)}`;
-     link.download = "transcript.txt";
-     link.click();
-   }
-
+    lexThread.map(i => {
+      if (i.type === "bot" && i.topic !== 'language.changed') {
+        myFinalText =
+          `${myFinalText 
+          }\r\n` +
+          ` ` +
+          `\r` +
+          `Miles (${ 
+          i.date 
+          }):${ 
+          i.message}`;
+      } else if (i.type === "human" || i.type === "feedback") {
+        myFinalText =
+          `${myFinalText  }\r\n` + ` ` + `\r` + `Me (${  i.date  }):${  i.message}`;
+      } else if (i.type === "humanClickedButton") {
+        myFinalText =
+          `${myFinalText 
+          }\r\n` +
+          ` ` +
+          `\r` +
+          `Me (${ 
+          i.date 
+          }):${ 
+          i.buttonText}`;
+      }
+    });
+    let link = document.createElement("a");
+    link.href = `data:text/plain;charset=UTF-8,${  escape(myFinalText)}`;
+    link.download = "transcript.txt";
+    link.click();
+  }
   return (
     <FooterContainer className='flex flex--nowrap flex--align-center flex--justify-content-start'>
       {ACTION_TYPE.LANGUAGES !== actionType &&
         <>
           <Button
-          onClick={() => handleSaveChat()}
+            onClick={() => handleSaveChat()}
             label={resource(language, "saveChat")}
             btnStyle={BUTTON_STYLE_SECONDARY}
             buttonClass='cb-button'
           />
-            <Button
-              onClick={() => dispatch(setActionType(ACTION_TYPE.LANGUAGES))}
-              label={resource(language, "language")}
-              btnStyle={BUTTON_STYLE_SECONDARY}
-              buttonClass='cb-button'
-              disabled={isChatEnded || status === LIVECHAT_STATUS.ESTABLISHED}
-            />
-            <Button
-              onClick={() => dispatch(endChat())}
-              label={resource(language, "endChat")}
-              btnStyle={BUTTON_STYLE_SECONDARY}
-              buttonClass='cb-button'
-              disabled={isChatEnded}
-            />
+          <Button
+            onClick={() => dispatch(setActionType(ACTION_TYPE.LANGUAGES))}
+            label={resource(language, "language")}
+            btnStyle={BUTTON_STYLE_SECONDARY}
+            buttonClass='cb-button'
+            disabled={isChatEnded || status === LIVECHAT_STATUS.ESTABLISHED}
+          />
+          <Button
+            onClick={() => dispatch(endChat())}
+            label={resource(language, "endChat")}
+            btnStyle={BUTTON_STYLE_SECONDARY}
+            buttonClass='cb-button'
+            disabled={isChatEnded}
+          />
         </>}
     </FooterContainer>
   )
