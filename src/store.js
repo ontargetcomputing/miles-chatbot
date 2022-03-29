@@ -5,6 +5,10 @@ const store = configureStore({
   reducer: {
     lexClient,
   },
+  middleware: getDefaultMiddleware =>
+  getDefaultMiddleware({
+    serializableCheck: false,
+  }),
   devTools: window.location.port,
 })
 
