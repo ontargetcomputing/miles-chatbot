@@ -29,8 +29,8 @@ img {
   padding-left: 10px;
 }
 `
-const thumpsup = './assets/images/thums-up.svg'
-const thumpsdown = './assets/images/thums-down.svg'
+const thumpsup = 'assets/images/thums-up.svg'
+const thumpsdown = 'assets/images/thums-down.svg'
 
 const RenderMessages = ({ res, isHideFeedbackIcon }) => {
   const dispatch = useDispatch();
@@ -39,6 +39,9 @@ const RenderMessages = ({ res, isHideFeedbackIcon }) => {
     dispatch(setIsFeedbackUpdated(true));
     dispatch(leXTextCall(feedbackType));
   }
+  const url = process.env.REACT_ASSETS_URL ? true : false
+  const thumpsUpPath = url ? `${process.env.REACT_ASSETS_URL}/thumpsup` : `./${thumpsup}`
+  const thumpsDownPath = url ?  `${process.env.REACT_ASSETS_URL}/thumpsdown` : `./${thumpsdown}`
 
   return (
     <>
@@ -49,8 +52,8 @@ const RenderMessages = ({ res, isHideFeedbackIcon }) => {
           </BotMessage>
         </div>
         {isHideFeedbackIcon && <FeedbackSection>
-          <img src={thumpsup} alt="logo" onClick={() => onClickFeedbackIcon(FEEDBACK_TYPE.THUMBS_UP)} />
-          <img src={thumpsdown} alt="logo" onClick={() => onClickFeedbackIcon(FEEDBACK_TYPE.THUMBS_DOWN)} />
+          <img src={`${thumpsUpPath}`} alt="logo" onClick={() => onClickFeedbackIcon(FEEDBACK_TYPE.THUMBS_UP)} />
+          <img src={`${thumpsDownPath}`} alt="logo" onClick={() => onClickFeedbackIcon(FEEDBACK_TYPE.THUMBS_DOWN)} />
         </FeedbackSection>}
       </>
       }
