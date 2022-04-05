@@ -37,10 +37,15 @@ export const LIVECHAT_STATUS = {
     ESTABLISHED: "established",
     DISCONNECTED: "disconnected",
     ENDED: "ended"
-  };
+};
 
-  export const END_CHAT_MESSAGES = {
-      AFTER_CONNECTION: 'Session Ended',
-      END_CHAT: `You've ended the Chat.`,
-      END_CHAT_TIMEOUT: `Your chat timed out because you didn't respond to the agent. If you'd like more help, please start a new chat.`
-  }
+export const END_CHAT_MESSAGES = {
+    AFTER_CONNECTION: 'Session Ended',
+    END_CHAT: `You've ended the Chat.`,
+    END_CHAT_TIMEOUT: `Your chat timed out because you didn't respond to the agent. If you'd like more help, please start a new chat.`
+}
+
+export const FEEDBACK_TYPE = {
+    THUMBS_UP: "Thumbs up",
+    THUMBS_DOWN: "Thumbs down"
+}

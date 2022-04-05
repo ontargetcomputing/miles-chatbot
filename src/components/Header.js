@@ -9,9 +9,11 @@ const Banner = styled.header`
 `
 
 function Header() {
+  const url = 'assets/images/chatbot-logo.svg'
+  const path = process.env.REACT_APP_ASSETS_URL ? `${process.env.REACT_APP_ASSETS_URL}/url` : `./${url}`
   return (
     <Banner>
-      <img src="./assets/images/chatbot-logo.svg" alt="logo" />
+      <img src={`${path}`} alt="logo" />
     </Banner>
   )
 }

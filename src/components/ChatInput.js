@@ -120,7 +120,7 @@ function ChatInput() {
           error={showError ? errorMsg : ""}
           onChange={onChange}
           hideLabel
-          placeholder='Start Chart'
+          placeholder='Start Chat'
           inputClass=''
           value={term}
           containerClass="cb-input-container"
@@ -128,7 +128,7 @@ function ChatInput() {
         <Button
           disabled={errorMsg || isLoading}
           isSubmit
-          label='Start'
+          label='Send'
           btnStyle={BUTTON_STYLE_PRIMARY}
         />
       </StartHereWrapper>

@@ -2,7 +2,7 @@
 import Button from './Button'
 import Markdown from 'react-markdown'
 import BotMessage from './BotMessage'
-import { BOT_TYPE } from '../helper/enum'
+import { BOT_TYPE, FEEDBACK_TYPE, LIVECHAT_STATUS } from '../helper/enum'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useRef } from 'react'
 import { botButtonAction } from '../connectors/lexClient'
@@ -10,6 +10,7 @@ import UserMessage from './UserMessage'
 import styled from 'styled-components'
 import PropTypes from 'prop-types';
 import { leXTextCall } from '../connectors/lexClient'
+import { setIsFeedbackUpdated } from '../ducks/lexClient'
 
 
 const ButtonWrapper = styled.div`
@@ -28,23 +29,31 @@ img {
   padding-left: 10px;
 }
 `
-const thumpsup = './assets/images/thums-up.svg'
-const thumpsdown = './assets/images/thums-down.svg'
+const thumpsup = 'assets/images/thums-up.svg'
+const thumpsdown = 'assets/images/thums-down.svg'
 
-const RenderMessages = ({ res, hide, lexThreadCount }) => {
-  const { agentAvailable } = useSelector(store => store.lexClient);
+const RenderMessages = ({ res, isHideFeedbackIcon }) => {
   const dispatch = useDispatch();
+
+  const onClickFeedbackIcon = (feedbackType) => {
+    dispatch(setIsFeedbackUpdated(true));
+    dispatch(leXTextCall(feedbackType));
+  }
+  const url = process.env.REACT_APP_ASSETS_URL ? true : false
+  const thumpsUpPath = url ? `${process.env.REACT_APP_ASSETS_URL}/thumpsup` : `./${thumpsup}`
+  const thumpsDownPath = url ?  `${process.env.REACT_APP_ASSETS_URL}/thumpsdown` : `./${thumpsdown}`
+
   return (
     <>
       {res.message && <>
         <div className='bp-md:w--90 p-10'>
-          <BotMessage type={res.type}> 
+          <BotMessage type={res.type}>
             <Markdown linkTarget="_blank">{res.message}</Markdown>
           </BotMessage>
         </div>
-        {!agentAvailable && lexThreadCount > 2 && !hide && <FeedbackSection>
-          <img src={thumpsup} alt="logo" onClick={() => dispatch(leXTextCall('Thumbs up'))} />
-          <img src={thumpsdown} alt="logo" onClick={() => dispatch(leXTextCall('Thumbs down'))} />
+        {isHideFeedbackIcon && <FeedbackSection>
+          <img src={`${thumpsUpPath}`} alt="logo" onClick={() => onClickFeedbackIcon(FEEDBACK_TYPE.THUMBS_UP)} />
+          <img src={`${thumpsDownPath}`} alt="logo" onClick={() => onClickFeedbackIcon(FEEDBACK_TYPE.THUMBS_DOWN)} />
         </FeedbackSection>}
       </>
       }
@@ -55,12 +64,11 @@ const RenderMessages = ({ res, hide, lexThreadCount }) => {
 
 RenderMessages.propTypes = {
   res: PropTypes.any,
-  hide: PropTypes.bool,
-  lexThreadCount: PropTypes.number
+  isHideFeedbackIcon: PropTypes.bool
 }
 
 export default function ChatMessagesLayout() {
-  const { lexThread, chatEnded } = useSelector(store => store.lexClient);
+  const { lexThread, chatEnded, agentAvailable, liveChat, isFeedbackUpdated } = useSelector(store => store.lexClient);
   const { isChatEnded, message } = chatEnded
   const messagesEndRef = useRef(null);
   const dispatch = useDispatch();
@@ -69,20 +77,21 @@ export default function ChatMessagesLayout() {
   useEffect(scrollToBottom, [lexThread]);
 
   const lexThreadCount = lexThread.length;
-  const disablePrevious = (index) => (lexThreadCount !== 1 && (lexThreadCount - 1) !== index)
+  const disablePrevious = (index) => (lexThreadCount === 1 || ((lexThreadCount - 1) === index));
+  const isHideFeedbackIcon = !isFeedbackUpdated && lexThreadCount > 2 && !agentAvailable && liveChat?.status === LIVECHAT_STATUS.DISCONNECTED;
   return (
     <>
       {lexThread.map((res, index) =>
         (res.type === BOT_TYPE.BOT || res.type === BOT_TYPE.AGENT) ? (
           <div key={index}>
-            <RenderMessages res={res} hide={disablePrevious(index)} lexThreadCount={lexThreadCount} />
+            <RenderMessages res={res} isHideFeedbackIcon={isHideFeedbackIcon && disablePrevious(index)} />
             <ButtonWrapper className='flex'>
               {res.buttons?.map(btn => (
                 <Button
-                  disabled={isChatEnded || disablePrevious(index)}
+                  disabled={isChatEnded || !disablePrevious(index)}
                   key={btn.text}
                   label={btn.text}
-                  onClick={() => dispatch(botButtonAction(btn))}
+                  onClick={() => !dispatch(botButtonAction(btn))}
                 />
               ))}
             </ButtonWrapper>

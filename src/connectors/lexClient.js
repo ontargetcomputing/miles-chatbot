@@ -100,7 +100,7 @@ export const searchQuery =
         date: new Date()
       }
       const newThread = [...lexThread, value]
-      if (liveChat.status === LIVECHAT_STATUS.ESTABLISHED) {
+      if (liveChat.status === LIVECHAT_STATUS.ESTABLISHED || liveChat.status === LIVECHAT_STATUS.CONNECTING) {
         const data = await service.sendMessage(language, sessionData, query)
         data.status === 200 ? dispatch(pushMessages(newThread)) : null
       } else {
@@ -146,9 +146,10 @@ export const updateLexThread =
 const getMessage = (service, payload) => async (dispatch, getState) => {
   const { liveChat, chatEnded, isAgentTyping } = getState().lexClient;
   const { isChatEnded } = chatEnded
+  const checkStatus = liveChat.status === LIVECHAT_STATUS.CONNECTING || liveChat.status === LIVECHAT_STATUS.ESTABLISHED
   try {
     const response = await service.getMessage(payload);
-    const joinedMsg = await translator(payload.targetLanguage, CONFIG.LIVE_AGENT.HAS_JOINED)?.data?.translation || CONFIG.LIVE_AGENT.HAS_JOINED;
+    const joinedMsg = checkStatus && await translator(payload.targetLanguage, CONFIG.LIVE_AGENT.HAS_JOINED)?.data?.translation || CONFIG.LIVE_AGENT.HAS_JOINED;
 
     const chatRequestSuccess = async () => {
       const responseConnectionEstablished = await translator(payload.targetLanguage, CONFIG.LIVE_AGENT.LIVE_CHAT_CONNECTION)
@@ -209,8 +210,7 @@ const getMessage = (service, payload) => async (dispatch, getState) => {
     console.log("GetMessage_Error", error);
   } finally {
     // await sleep(CONFIG.LIVE_AGENT.SALESFORCE_POLLING_INTERVAL);
-    if (liveChat.status === LIVECHAT_STATUS.CONNECTING ||
-      liveChat.status === LIVECHAT_STATUS.ESTABLISHED && !isChatEnded) {
+    if (checkStatus && !isChatEnded) {
       setTimeout(() => dispatch(getMessage(service, payload)), CONFIG.LIVE_AGENT.SALESFORCE_POLLING_INTERVAL);
     }
   }
