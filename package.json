@@ -1,6 +1,6 @@
 {
   "name": "miles-chatbot",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@ca-dmv/core": "^1.2.169",
