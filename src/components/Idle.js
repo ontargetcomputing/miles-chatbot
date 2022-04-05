@@ -80,7 +80,7 @@ const IdleTime = ({ idleTimeInSeconds, warnTimeInSeconds }) => {
       <div>
         <MessageText>Are you still there? Please respond within </MessageText>
         <MessageText>{countDown}s</MessageText>
-        <MessageText>this chat will time out.</MessageText>
+        <MessageText>or the chat will time out.</MessageText>
       </div>
     </Modal>
   )
