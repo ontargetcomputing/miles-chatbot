@@ -39,9 +39,9 @@ const RenderMessages = ({ res, isHideFeedbackIcon }) => {
     dispatch(setIsFeedbackUpdated(true));
     dispatch(leXTextCall(feedbackType));
   }
-  const url = process.env.REACT_ASSETS_URL ? true : false
-  const thumpsUpPath = url ? `${process.env.REACT_ASSETS_URL}/thumpsup` : `./${thumpsup}`
-  const thumpsDownPath = url ?  `${process.env.REACT_ASSETS_URL}/thumpsdown` : `./${thumpsdown}`
+  const url = process.env.REACT_APP_ASSETS_URL ? true : false
+  const thumpsUpPath = url ? `${process.env.REACT_APP_ASSETS_URL}/thumpsup` : `./${thumpsup}`
+  const thumpsDownPath = url ?  `${process.env.REACT_APP_ASSETS_URL}/thumpsdown` : `./${thumpsdown}`
 
   return (
     <>
