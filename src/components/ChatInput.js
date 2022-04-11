@@ -31,6 +31,10 @@ const Button = styled(ActionButton)`
 
 `
 
+const Form = styled.form`
+margin-block-end: 0em !important;
+` 
+
 function ChatInput() {
   const dispatch = useDispatch();
   const [errorMsg, setErrorMsg] = useState("");
@@ -112,7 +116,7 @@ function ChatInput() {
   const onChange = data => setSearchTerm(data)
 
   return (
-    <form onSubmit={e => handleSubmit(e)} >
+    <Form onSubmit={e => handleSubmit(e)} >
       <StartHereWrapper className={`flex flex--align-start ${errorMsg && showError ? "bot-error" : ""}`}>
         <InputText
           pattern={pattern[lexTopic] || null}
@@ -132,7 +136,7 @@ function ChatInput() {
           btnStyle={BUTTON_STYLE_PRIMARY}
         />
       </StartHereWrapper>
-    </form>
+    </Form>
   )
 }
 
