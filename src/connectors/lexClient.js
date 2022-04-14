@@ -39,12 +39,13 @@ export const leXTextCall =
         const language = qnabotcontext
           ? JSON.parse(qnabotcontext).userLocale
           : 'en'
+          const buttons = JSON.parse(response?.sessionAttributes?.appContext)
         const newThread = [
           ...lexThread,
           {
             message: initialRender ? '' : response.message,
-            buttons: response?.responseCard?.genericAttachments[0]?.buttons
-              ? response?.responseCard?.genericAttachments[0]?.buttons
+            buttons: buttons?.responseCard?.genericAttachments[0]?.buttons
+              ? buttons?.responseCard?.genericAttachments[0]?.buttons
               : [],
             type: 'bot',
             language,
