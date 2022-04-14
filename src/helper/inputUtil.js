@@ -13,11 +13,9 @@ export class InputUtil {
         }
         return false;
     }
-
     static isValidEmail(data) {
-        const regExp = RegExp(/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/)
-
-        if (data) {
+        const regExp = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+       if (data) {
             return regExp.test(data)
         }
         return false;

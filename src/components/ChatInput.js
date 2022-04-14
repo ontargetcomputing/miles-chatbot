@@ -7,6 +7,7 @@ import { searchQuery } from '../connectors/lexClient'
 import { LEXTHREAD_PROPS, TOPIC } from '../helper/enum'
 import { InputUtil } from '../helper/inputUtil'
 import { Util } from '../helper/Util'
+import { setIsFeedbackUpdated } from '../ducks/lexClient'
 
 const StartHereWrapper = styled.div`
   height: 65px;
@@ -40,7 +41,7 @@ function ChatInput() {
   const [errorMsg, setErrorMsg] = useState("");
   const [showError, setShowError] = useState(true);
   const [term, setSearchTerm] = useState('');
-  const { lexThread, isLoading } = useSelector(store => store.lexClient);
+  const { lexThread, isLoading, isFeedbackUpdated } = useSelector(store => store.lexClient);
   const [lexTopic, setTopic] = useState("");
   const pattern = {
     [TOPIC.PHONE_NUMBER]: '[0-9]*'
@@ -105,6 +106,7 @@ function ChatInput() {
     setErrorMsg("");
     setShowError(false);
     dispatch(searchQuery(term))
+    isFeedbackUpdated && dispatch(setIsFeedbackUpdated(false));
     setSearchTerm('')
   }
 
