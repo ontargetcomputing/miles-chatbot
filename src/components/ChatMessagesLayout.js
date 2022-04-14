@@ -42,13 +42,13 @@ const RenderMessages = ({ res, isHideFeedbackIcon }) => {
   const url = process.env.REACT_APP_ASSETS_URL ? true : false
   const thumpsUpPath = url ? `${process.env.REACT_APP_ASSETS_URL}/${thumpsup}` : `./${thumpsup}`
   const thumpsDownPath = url ?  `${process.env.REACT_APP_ASSETS_URL}/${thumpsdown}` : `./${thumpsdown}`
-
-  return (
+  const message = res?.message?.replace(/]\s\(/g,"](")
+   return (
     <>
       {res.message && <>
         <div className='bp-md:w--90 p-10'>
           <BotMessage type={res.type}>
-            <Markdown linkTarget="_blank">{res.message}</Markdown>
+            <Markdown linkTarget="_blank">{message}</Markdown>
           </BotMessage>
         </div>
         {isHideFeedbackIcon && <FeedbackSection>
@@ -91,7 +91,10 @@ export default function ChatMessagesLayout() {
                   disabled={isChatEnded || !disablePrevious(index)}
                   key={btn.text}
                   label={btn.text}
-                  onClick={() => !dispatch(botButtonAction(btn))}
+                  onClick={() => {
+                    !dispatch(botButtonAction(btn))
+                    isFeedbackUpdated && dispatch(setIsFeedbackUpdated(false));
+                  }}
                 />
               ))}
             </ButtonWrapper>
