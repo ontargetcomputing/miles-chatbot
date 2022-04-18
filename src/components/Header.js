@@ -8,12 +8,16 @@ const Banner = styled.header`
   background-color: ${(props) => props.theme.colors.blue.cblue};
 `
 
+const Image = styled.img`
+height: 50px;
+`
+
 function Header() {
   const url = 'assets/images/chatbot-logo.svg'
   const path = process.env.REACT_APP_ASSETS_URL ? `${process.env.REACT_APP_ASSETS_URL}/${url}` : `./${url}`
   return (
     <Banner>
-      <img src={`${path}`} alt="logo" />
+      <Image src={`${path}`} alt="logo" />
     </Banner>
   )
 }
