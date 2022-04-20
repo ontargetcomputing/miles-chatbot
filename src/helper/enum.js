@@ -16,7 +16,8 @@ export const TOPIC = {
     FIRST_NAME: "liveChat.firstname",
     LAST_NAME: "liveChat.lastname",
     EMAIL: "liveChat.emailaddress",
-    PHONE_NUMBER: "liveChat.phonenumber"
+    PHONE_NUMBER: "liveChat.phonenumber",
+    ENTERING_TOPIC: "liveChatStatus.enteringTopic"
 }
 
 export const BOT_INQUIRY_OPTIONS = ["Driver License", "Real ID", "Vehicle Registration", "Other"]

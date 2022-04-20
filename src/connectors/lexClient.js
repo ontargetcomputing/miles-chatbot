@@ -15,7 +15,7 @@ import {
   setIsLoading,
   setIsAgentTyping,
 } from '../ducks/lexClient'
-import { ACTION_TYPE, BOT_INQUIRY_OPTIONS, BOT_TYPE, LIVECHAT_STATUS, END_CHAT_MESSAGES } from '../helper/enum'
+import { ACTION_TYPE, BOT_INQUIRY_OPTIONS, BOT_TYPE, LIVECHAT_STATUS, END_CHAT_MESSAGES, TOPIC } from '../helper/enum'
 import { Util, convertLinks } from '../helper/Util'
 import { AgentLiveService, ConstructPayload } from './base-service.js/agentLiveService'
 import { axiosWithRetry } from './base-service.js/axios-wrapper'
@@ -66,7 +66,7 @@ export const leXTextCall =
     }
 
 const processResponse = data => {
-  if (data.sessionAttributes.topic === 'liveChatStatus.starting') {
+  if (data.sessionAttributes.topic === TOPIC.ENTERING_TOPIC) {
     const agent_available = data.sessionAttributes.agents_available
     const buttonsArray = data.responseCard.genericAttachments[0].buttons
 
@@ -93,7 +93,7 @@ export const changeLanguage = language => async dispatch => {
 export const searchQuery =
   (query, displayText = '') =>
     async (dispatch, getState) => {
-      const { lexThread, language, liveChat, sessionData } = getState().lexClient
+      const { lexThread, language, liveChat, sessionData, agentAvailable } = getState().lexClient
       const value = {
         type: 'human',
         message: displayText || query,
@@ -101,10 +101,15 @@ export const searchQuery =
         date: new Date()
       }
       const newThread = [...lexThread, value]
-      if (liveChat.status === LIVECHAT_STATUS.ESTABLISHED || liveChat.status === LIVECHAT_STATUS.CONNECTING) {
+      const topic = lexThread[lexThread.length - 1].topic === 'liveChatStatus.enteringTopic'
+      if(agentAvailable && topic){
+        dispatch(createCase(query))
+      }
+     else if (liveChat.status === LIVECHAT_STATUS.ESTABLISHED || liveChat.status === LIVECHAT_STATUS.CONNECTING) {
         const data = await service.sendMessage(language, sessionData, query)
         data.status === 200 ? dispatch(pushMessages(newThread)) : null
-      } else {
+      }
+        else {
         dispatch(lexPostCall(newThread))
         dispatch(leXTextCall(query))
       }
@@ -144,6 +149,8 @@ export const updateLexThread =
     dispatch(pushMessages(newThread))
   }
 
+  let chatRequest=''
+
 const getMessage = (service, payload) => async (dispatch, getState) => {
   const { liveChat, chatEnded, isAgentTyping } = getState().lexClient;
   const { isChatEnded } = chatEnded
@@ -166,6 +173,11 @@ const getMessage = (service, payload) => async (dispatch, getState) => {
     const chatMessage = (data) => {
       const cookedText = convertLinks(data.message.text)
       dispatch(updateLexThread(cookedText, BOT_TYPE.AGENT));
+    }
+
+    const chatRequestFail = (element) => {
+      chatRequest= element
+      dispatch(updateLexThread('Unable to connect with an agent.'))
     }
 
     const messages = response.data.messages;
@@ -200,7 +212,7 @@ const getMessage = (service, payload) => async (dispatch, getState) => {
           dispatch(setEndChat({ isChatEnded: true, message: "Agent has ended the session" }))
           break;
         case 'ChatRequestFail':
-          dispatch(updateLexThread('Unable to connect with an agent.'))
+          chatRequestFail(element?.type)
           break;
         default:
           console.error(`Unknown message type:${element.type}`)
@@ -211,7 +223,7 @@ const getMessage = (service, payload) => async (dispatch, getState) => {
     console.log("GetMessage_Error", error);
   } finally {
     // await sleep(CONFIG.LIVE_AGENT.SALESFORCE_POLLING_INTERVAL);
-    if (checkStatus && !isChatEnded) {
+    if (checkStatus && !isChatEnded && !chatRequest) {
       setTimeout(() => dispatch(getMessage(service, payload)), CONFIG.LIVE_AGENT.SALESFORCE_POLLING_INTERVAL);
     }
   }
