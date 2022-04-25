@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import { BUTTON_STYLE_SECONDARY } from '@ca-dmv/core'
 import Button from './Button'
 import styled from 'styled-components'
@@ -48,7 +49,7 @@ function Footer() {
           i.date 
           }):${ 
           i.message}`;
-      } else if (i.type === "human" || i.type === "feedback") {
+      } else if (i.type === "human" || i.type === "feedback" || i.type === "agent") {
         myFinalText =
           `${myFinalText  }\r\n` + ` ` + `\r` + `Me (${  i.date  }):${  i.message}`;
       } else if (i.type === "humanClickedButton") {

@@ -79,7 +79,6 @@ export default createReducer(initialState, {
   [setIsFeedbackUpdated]: (state, action) => {
     state.isFeedbackUpdated = action.payload
   },
-  //   state.userSettings = { ...state.userSettings, ...action.payload };
   [setUserDetails]: (state, action) => {
     state.userDetails={...action.payload, ...state.userDetails}
   },

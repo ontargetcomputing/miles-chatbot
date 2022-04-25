@@ -103,6 +103,7 @@ export const searchQuery =
       const newThread = [...lexThread, value]
       const topic = lexThread[lexThread.length - 1].topic === 'liveChatStatus.enteringTopic'
       if(agentAvailable && topic){
+        dispatch(updateLexThread(query,BOT_TYPE.HUMAN))
         dispatch(createCase(query))
       }
      else if (liveChat.status === LIVECHAT_STATUS.ESTABLISHED || liveChat.status === LIVECHAT_STATUS.CONNECTING) {
