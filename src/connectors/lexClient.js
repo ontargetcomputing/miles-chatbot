@@ -123,6 +123,7 @@ export const botButtonAction = buttonItem => (dispatch, getState) => {
     isAgentAvailable &&
     BOT_INQUIRY_OPTIONS.includes(buttonItem.text)
   ) {
+    dispatch(updateLexThread(buttonItem.text,  BOT_TYPE.HUMAN))
     dispatch(createCase(buttonItem.text))
 
     return
@@ -231,9 +232,10 @@ const getMessage = (service, payload) => async (dispatch, getState) => {
 
 export const createCase = actionType => async (dispatch, getState) => {
   try {
-    const { language, lexThread } = getState().lexClient
-    const recentThread = lexThread.length && lexThread[lexThread.length - 1]
+    const { language, lexThread, userDetails } = getState().lexClient
+    const recentThread = lexThread.length && lexThread[lexThread.length - 2]
     const casePayload = Util.getCreateCasePayload(
+      userDetails,
       recentThread,
       language,
       actionType
