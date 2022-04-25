@@ -1,3 +1,5 @@
+import { TOPIC } from "./enum";
+
 /* eslint-disable no-useless-escape */
 export class Util {
     static getPropsFromArray(props, array, hasFetchFromLast = true, index = 0) {
@@ -10,13 +12,13 @@ export class Util {
         return null;
     }
 
-    static getCreateCasePayload(lexThread, language, buttonText) {
+    static getCreateCasePayload(userDetails, lexThread, language, buttonText) {
         let livechat = lexThread?.sessionAttributes?.livechat;
         if (livechat) {
             livechat = JSON.parse(livechat);
             const payload = {
-                firstname: livechat.firstname.FreeText,
-                lastname: livechat.lastname.FreeText,
+                firstname: userDetails[TOPIC.FIRST_NAME],
+                lastname: userDetails[TOPIC.LAST_NAME],
                 email: livechat.emailaddress.FreeText,
                 language,
                 phonenumber: livechat.phonenumber.FreeText,

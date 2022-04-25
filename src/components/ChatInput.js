@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 import styled from 'styled-components'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -7,7 +8,7 @@ import { searchQuery } from '../connectors/lexClient'
 import { LEXTHREAD_PROPS, TOPIC } from '../helper/enum'
 import { InputUtil } from '../helper/inputUtil'
 import { Util } from '../helper/Util'
-import { setIsFeedbackUpdated } from '../ducks/lexClient'
+import { setIsFeedbackUpdated, setUserDetails } from '../ducks/lexClient'
 
 const StartHereWrapper = styled.div`
   height: 65px;
@@ -107,6 +108,7 @@ function ChatInput() {
     setShowError(false);
     dispatch(searchQuery(term))
     isFeedbackUpdated && dispatch(setIsFeedbackUpdated(false));
+    (lexTopic === TOPIC.FIRST_NAME || lexTopic === TOPIC.LAST_NAME) && dispatch(setUserDetails({[lexTopic]:term}))
     setSearchTerm('')
   }
 
@@ -116,7 +118,6 @@ function ChatInput() {
   }, [term])
 
   const onChange = data => setSearchTerm(data)
-
   return (
     <Form onSubmit={e => handleSubmit(e)} >
       <StartHereWrapper className={`flex flex--align-start ${errorMsg && showError ? "bot-error" : ""}`}>
