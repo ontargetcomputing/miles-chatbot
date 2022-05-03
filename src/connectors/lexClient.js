@@ -241,7 +241,7 @@ export const createCase = actionType => async (dispatch, getState) => {
       language,
       actionType
     )
-
+  const userDetail =  `${userDetails['liveChat.firstname']}${userDetails['liveChat.lastname']} - ${casePayload.email}`
     dispatch(setIsLoading(true));
     const result = await service.createCase(casePayload)
 
@@ -266,7 +266,7 @@ export const createCase = actionType => async (dispatch, getState) => {
               lexThread,
               caseData.caseId,
               caseData.contact.Id,
-              casePayload.email
+              userDetail
             )
 
             if (connectResponse.status === 200) {
