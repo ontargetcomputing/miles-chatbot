@@ -49,9 +49,12 @@ function Footer() {
           i.date 
           }):${ 
           i.message}`;
-      } else if (i.type === "human" || i.type === "feedback" || i.type === "agent") {
+      } else if (i.type === "human" || i.type === "feedback") {
         myFinalText =
           `${myFinalText  }\r\n` + ` ` + `\r` + `Me (${  i.date  }):${  i.message}`;
+      }  else if (i.type === "agent") {
+        myFinalText =
+          `${myFinalText  }\r\n` + ` ` + `\r` + `Agent:${  i.message}`;
       } else if (i.type === "humanClickedButton") {
         myFinalText =
           `${myFinalText 
