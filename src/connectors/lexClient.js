@@ -6,9 +6,7 @@ import {
   lexPostCall,
   setLanguage,
   setActionType,
-  resetIdleTimer,
   pushMessages,
-  // agentAvailable,
   setEndChat,
   setliveChat,
   setSessionData,
@@ -26,7 +24,6 @@ export const leXTextCall =
   (searchTerm, initialRender = false) =>
     async (dispatch, getState) => {
       try {
-        dispatch(resetIdleTimer());
         dispatch(setIsLoading(true));
         const { lexThread } = getState().lexClient
         const response = await Interactions.send(

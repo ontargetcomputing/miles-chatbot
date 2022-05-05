@@ -10,7 +10,7 @@ import ChatMessagesLayout from "./ChatMessagesLayout"
 import { leXTextCall } from "../connectors/lexClient"
 import IdleTime from "./Idle"
 import { Util } from "../helper/Util"
-import { agentAvailable } from "../ducks/lexClient"
+import { agentAvailable, resetIdleTimer } from "../ducks/lexClient"
 import { Loading } from '@ca-dmv/core';
 
 const LayoutWrapper = styled.div`
@@ -39,6 +39,7 @@ function Layout() {
     } else if (liveChatTopic) {
       dispatch(agentAvailable(true))
     }
+    dispatch(resetIdleTimer());
   }, [lexThread])
   return (
     <>
