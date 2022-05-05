@@ -2,9 +2,11 @@ import React, { useEffect, useRef, useState } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { MessageText } from "./ChatMessagesLayout"
 import { setActionType, setEndChat } from "../ducks/lexClient"
+import { endChat } from '../connectors/lexClient'
 import Modal from "./Modal"
 import PropTypes from "prop-types"
 import { ACTION_TYPE,  END_CHAT_MESSAGES } from "../helper/enum"
+import { LIVECHAT_STATUS } from "../helper/enum"
 
 // const message = `Your chat timed out because you didn't 
 // respond to the agent. If you'd like more help, 
@@ -19,8 +21,9 @@ const IdleTime = ({ idleTimeInSeconds, warnTimeInSeconds }) => {
   const idleTimerRef = useRef() // 30sec
   const warnIntervalRef = useRef()
 
-  const { resetIdleTime, chatEnded, actionType } = useSelector((store) => store.lexClient)
+  const { resetIdleTime, chatEnded, actionType, liveChat } = useSelector((store) => store.lexClient)
   const { isChatEnded } = chatEnded
+  const { status } = liveChat
 
   const [countDown, setCountDown] = useState(countDownDefaultValue) // should be in seconds
   const [showWarning, setShowWarning] = useState(false)
@@ -34,11 +37,17 @@ const IdleTime = ({ idleTimeInSeconds, warnTimeInSeconds }) => {
     }
   }, [])
 
+  const endChatOnTimeout = () =>  dispatch(endChat())
+  
+
   useEffect(() => {
     if (countDown <= 0) {
       clearAllTimer()
       setActive(false)
       setShowWarning(false)
+      if(status === LIVECHAT_STATUS.ESTABLISHED || status === LIVECHAT_STATUS.CONNECTING){
+        endChatOnTimeout()
+      }
       dispatch(setEndChat({ isChatEnded: true, message: END_CHAT_MESSAGES.END_CHAT_TIMEOUT }))
       actionType === ACTION_TYPE.LANGUAGES && dispatch(setActionType(ACTION_TYPE.DEFAULT))
     }
