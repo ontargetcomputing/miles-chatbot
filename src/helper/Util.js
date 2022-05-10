@@ -1,5 +1,5 @@
 import { TOPIC } from "./enum";
-
+import { InputUtil } from "./inputUtil";
 /* eslint-disable no-useless-escape */
 export class Util {
     static getPropsFromArray(props, array, hasFetchFromLast = true, index = 0) {
@@ -65,4 +65,31 @@ export const convertLinks = (text) => {
       cookedText = cookedText.replace(m[0], `(${m[0]})`)
     }
     return cookedText
+  }
+
+  export const isRequired = (data, cb) => {
+    if (!InputUtil.isRequired(data)) {
+      cb("Input field cannot be empty");
+      return false;
+    }
+    cb("");
+    return true;
+  }
+
+  export const isValidEmail = (data, cb) => {
+    if (!InputUtil.isValidEmail(data)) {
+      cb("Please enter valid email address");
+      return false;
+    }
+    cb("");
+    return true;
+  }
+
+  export const isValidPhoneNumber = (data, cb) => {
+    if (!InputUtil.isValidPhone(data)) {
+      cb("Please enter valid phone number");
+      return false;
+    }
+    cb("");
+    return true;
   }

@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 /* eslint-disable max-lines-per-function */
 import styled from 'styled-components'
 import { useEffect, useState } from 'react'
@@ -6,9 +7,9 @@ import { InputText, BUTTON_STYLE_PRIMARY } from '@ca-dmv/core'
 import ActionButton from './Button'
 import { searchQuery } from '../connectors/lexClient'
 import { LEXTHREAD_PROPS, TOPIC } from '../helper/enum'
-import { InputUtil } from '../helper/inputUtil'
 import { Util } from '../helper/Util'
-import { setIsFeedbackUpdated, setUserDetails } from '../ducks/lexClient'
+import { setIsFeedbackUpdated, setUserDetails, disableInputField } from '../ducks/lexClient'
+import { isRequired, isValidEmail, isValidPhoneNumber } from '../helper/Util'
 
 const StartHereWrapper = styled.div`
   height: 65px;
@@ -42,7 +43,7 @@ function ChatInput() {
   const [errorMsg, setErrorMsg] = useState("");
   const [showError, setShowError] = useState(true);
   const [term, setSearchTerm] = useState('');
-  const { lexThread, isLoading, isFeedbackUpdated } = useSelector(store => store.lexClient);
+  const { lexThread, isLoading, isFeedbackUpdated, disableInput } = useSelector(store => store.lexClient);
   const [lexTopic, setTopic] = useState("");
   const pattern = {
     [TOPIC.PHONE_NUMBER]: '[0-9]*'
@@ -51,40 +52,13 @@ function ChatInput() {
     data = data || term;
 
     if (topic === TOPIC.FIRST_NAME || topic === TOPIC.LAST_NAME) {
-      return isRequired(data);
+      return isRequired(data, setErrorMsg);
     } else if (topic === TOPIC.EMAIL) {
-      return isValidEmail(data);
+      return isValidEmail(data, setErrorMsg);
     } else if (topic === TOPIC.PHONE_NUMBER) {
-      return isValidPhoneNumber(data);
+      return isValidPhoneNumber(data, setErrorMsg);
     }
     setErrorMsg("");
-  }
-
-  const isRequired = (data) => {
-    if (!InputUtil.isRequired(data)) {
-      setErrorMsg("Input field cannot be empty");
-      return false;
-    }
-    setErrorMsg("");
-    return true;
-  }
-
-  const isValidEmail = (data) => {
-    if (!InputUtil.isValidEmail(data)) {
-      setErrorMsg("Please enter valid email address");
-      return false;
-    }
-    setErrorMsg("");
-    return true;
-  }
-
-  const isValidPhoneNumber = (data) => {
-    if (!InputUtil.isValidPhone(data)) {
-      setErrorMsg("Please enter valid phone number");
-      return false;
-    }
-    setErrorMsg("");
-    return true;
   }
 
   useEffect(() => {
@@ -108,7 +82,8 @@ function ChatInput() {
     setShowError(false);
     dispatch(searchQuery(term))
     isFeedbackUpdated && dispatch(setIsFeedbackUpdated(false));
-    (lexTopic === TOPIC.FIRST_NAME || lexTopic === TOPIC.LAST_NAME) && dispatch(setUserDetails({[lexTopic]:term}))
+    (lexTopic === TOPIC.FIRST_NAME || lexTopic === TOPIC.LAST_NAME) && dispatch(setUserDetails({[lexTopic]:term}));
+    (lexTopic === TOPIC.PHONE_NUMBER) && dispatch(disableInputField(true))
     setSearchTerm('')
   }
 
@@ -118,22 +93,24 @@ function ChatInput() {
   }, [term])
 
   const onChange = data => setSearchTerm(data)
+  const disableBtn = errorMsg || isLoading || disableInput
   return (
     <Form onSubmit={e => handleSubmit(e)} >
-      <StartHereWrapper className={`flex flex--align-start ${errorMsg && showError ? "bot-error" : ""}`}>
+      <StartHereWrapper className={`flex flex--align-start ${errorMsg && showError &&  "bot-error"}`}>
         <InputText
           pattern={pattern[lexTopic] || null}
           hideError={!showError}
-          error={showError ? errorMsg : ""}
+          error={showError && errorMsg}
           onChange={onChange}
           hideLabel
           placeholder='Start Chat'
           inputClass=''
           value={term}
           containerClass="cb-input-container"
+          disabled={disableInput}
         />
         <Button
-          disabled={errorMsg || isLoading}
+          disabled={disableBtn}
           isSubmit
           label='Send'
           btnStyle={BUTTON_STYLE_PRIMARY}
