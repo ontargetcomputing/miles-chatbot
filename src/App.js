@@ -46,6 +46,8 @@ const App = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    const bootstrap = 'QID::Bootstrap.Miles.001'
+    dispatch(leXTextCall(bootstrap, true))
     const language = 'English'
     dispatch(leXTextCall(language, true))
   }, [])
