@@ -12,6 +12,7 @@ import {
   setSessionData,
   setIsLoading,
   setIsAgentTyping,
+  disableInputField
 } from '../ducks/lexClient'
 import { ACTION_TYPE, BOT_INQUIRY_OPTIONS, BOT_TYPE, LIVECHAT_STATUS, END_CHAT_MESSAGES, TOPIC } from '../helper/enum'
 import { Util, convertLinks } from '../helper/Util'
@@ -101,7 +102,6 @@ export const searchQuery =
       const topic = lexThread[lexThread.length - 1].topic === 'liveChatStatus.enteringTopic'
       if(agentAvailable && topic){
         dispatch(updateLexThread(query,BOT_TYPE.HUMAN))
-        dispatch(createCase(query))
       }
      else if (liveChat.status === LIVECHAT_STATUS.ESTABLISHED || liveChat.status === LIVECHAT_STATUS.CONNECTING) {
         const data = await service.sendMessage(language, sessionData, query)
@@ -123,6 +123,7 @@ export const botButtonAction = buttonItem => (dispatch, getState) => {
   ) {
     dispatch(updateLexThread(buttonItem.text,  BOT_TYPE.HUMAN))
     dispatch(createCase(buttonItem.text))
+    dispatch(disableInputField(false))
 
     return
   }
@@ -238,7 +239,7 @@ export const createCase = actionType => async (dispatch, getState) => {
       language,
       actionType
     )
-  const userDetail =  `${userDetails['liveChat.firstname']}${userDetails['liveChat.lastname']} - ${casePayload.email}`
+  const userDetail =  `${userDetails['liveChat.firstname']} ${userDetails['liveChat.lastname']} - ${casePayload.email}`
     dispatch(setIsLoading(true));
     const result = await service.createCase(casePayload)
 

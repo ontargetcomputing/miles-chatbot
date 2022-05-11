@@ -14,6 +14,7 @@ export const setIsLoading = createAction("lexClient/setIsLoading");
 export const setIsAgentTyping = createAction("lexClient/setIsAgentTyping");
 export const setIsFeedbackUpdated = createAction("lexClient/setIsFeedbackUpdated");
 export const setUserDetails = createAction("lexClient/userDetails")
+export const disableInputField = createAction("lexClient/disableInputField")
 
 const initialState = {
   isLoading: false,
@@ -30,7 +31,8 @@ const initialState = {
   liveChat: { status: LIVECHAT_STATUS.DISCONNECTED },
   sessionData: {},
   isFeedbackUpdated: false,
-  userDetails:{}
+  userDetails:{},
+  disableInput: false
 }
 
 export default createReducer(initialState, {
@@ -81,5 +83,8 @@ export default createReducer(initialState, {
   },
   [setUserDetails]: (state, action) => {
     state.userDetails={...action.payload, ...state.userDetails}
+  },
+  [disableInputField]: (state, action) => {
+    state.disableInput= action.payload
   },
 })
