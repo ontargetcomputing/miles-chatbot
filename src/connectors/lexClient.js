@@ -14,7 +14,7 @@ import {
   setIsAgentTyping,
   disableInputField
 } from '../ducks/lexClient'
-import { ACTION_TYPE, BOT_INQUIRY_OPTIONS, BOT_TYPE, LIVECHAT_STATUS, END_CHAT_MESSAGES, TOPIC } from '../helper/enum'
+import { ACTION_TYPE, BOT_TYPE, LIVECHAT_STATUS, END_CHAT_MESSAGES, TOPIC, LEXTHREAD_PROPS } from '../helper/enum'
 import { Util, convertLinks } from '../helper/Util'
 import { AgentLiveService, ConstructPayload } from './base-service.js/agentLiveService'
 import { axiosWithRetry } from './base-service.js/axios-wrapper'
@@ -114,12 +114,13 @@ export const searchQuery =
     }
 
 export const botButtonAction = buttonItem => (dispatch, getState) => {
-  const { lexThread } = getState().lexClient
+  const { lexThread  } = getState().lexClient
   const recentThread = lexThread.length && lexThread[lexThread.length - 1]
   const isAgentAvailable = recentThread?.isAgentAvailable
+  const checkTopicEntered = Util.getPropsFromArray(LEXTHREAD_PROPS.TOPIC, lexThread) === TOPIC.ENTERING_TOPIC
   if (
     isAgentAvailable &&
-    BOT_INQUIRY_OPTIONS.includes(buttonItem.text)
+    checkTopicEntered
   ) {
     dispatch(updateLexThread(buttonItem.text,  BOT_TYPE.HUMAN))
     dispatch(createCase(buttonItem.text))

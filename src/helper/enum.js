@@ -20,8 +20,6 @@ export const TOPIC = {
     ENTERING_TOPIC: "liveChatStatus.enteringTopic"
 }
 
-export const BOT_INQUIRY_OPTIONS = ["Driver License", "Real ID", "Vehicle Registration", "Other"]
-
 export const BOT_TYPE = {
     HUMAN: 'human',
     AGENT: 'agent',
