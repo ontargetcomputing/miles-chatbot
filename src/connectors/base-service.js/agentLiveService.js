@@ -87,7 +87,7 @@ export class AgentLiveService {
         const config = {
             method: 'post',
             url: `${CONFIG.LIVE_AGENT.ENDPOINT}/sendMessage`,
-            data: { ...session, sourceLanguage: language, message },
+            data: { ...session, sourceLanguage: language, targetLanguage: "en", message },
           }
           return axiosWithRetry(config)
     }
