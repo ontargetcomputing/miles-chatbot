@@ -20,7 +20,7 @@ export class Util {
                 firstname: userDetails[TOPIC.FIRST_NAME],
                 lastname: userDetails[TOPIC.LAST_NAME],
                 email: livechat.emailaddress.FreeText,
-                language,
+                sourceLanguage: language,
                 phonenumber: livechat.phonenumber.FreeText,
                 casedescription: buttonText,
                 casesubject: 'Chatbot Inquiry'
