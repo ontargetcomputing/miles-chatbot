@@ -79,9 +79,6 @@ RenderMessages.propTypes = {
   isEnableThumps: PropTypes.bool,
 }
 
-// agent avaialbe = true and topic is straing -----> not show thumps
-// agent avaialbe = false and topic is straing -----> not show thumps
-// agent avaialbe = true and topic is enterting -----> not show thumps
 
 export default function ChatMessagesLayout({ agentAvailable }) {
   const { lexThread, chatEnded, liveChat, isFeedbackUpdated } = useSelector(
@@ -104,10 +101,13 @@ export default function ChatMessagesLayout({ agentAvailable }) {
     liveChat?.status === LIVECHAT_STATUS.DISCONNECTED
 
   const actionButtons = (res, index) => {
+     let newArr = [...res.buttons]
+      newArr.splice(0,2)
     const showOnlyBackToHomeButton =
       !agentAvailable && res?.topic === TOPIC.STARTING
+
     let linkButton = showOnlyBackToHomeButton
-      ? res.buttons?.slice(-2)
+      ? newArr
       : res.buttons
     return linkButton?.map(btn => (
       <Button
