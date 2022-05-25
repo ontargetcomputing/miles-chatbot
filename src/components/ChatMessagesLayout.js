@@ -2,7 +2,7 @@
 import Button from './Button'
 import Markdown from 'react-markdown'
 import BotMessage from './BotMessage'
-import { BOT_TYPE, FEEDBACK_TYPE, LIVECHAT_STATUS, SEARCH_QUERY, TOPIC } from '../helper/enum'
+import { BOT_TYPE, FEEDBACK_TYPE, LIVECHAT_STATUS, TOPIC } from '../helper/enum'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useRef } from 'react'
 import { botButtonAction } from '../connectors/lexClient'
@@ -83,22 +83,16 @@ export default function ChatMessagesLayout() {
 
   const actionButtons = (res, index) => {
     const showOnlyBackToHomeButton = agentAvailable && res?.topic === TOPIC.STARTING;
-    if (showOnlyBackToHomeButton) {
-      const linkButton = res.button?.find(link => link.value === SEARCH_QUERY.WELCOME) || { text: "Return to the main menu", value: SEARCH_QUERY.WELCOME };
-      return <Button disabled={disable(index)} key={linkButton.text} label={linkButton.text} onClick={() => {
-        !dispatch(botButtonAction(linkButton))
+    let linkButton =showOnlyBackToHomeButton? res.buttons?.slice(-2):res.buttons;
+    
+      
+    return linkButton?.map(btn => (
+      <Button disabled={disable(index)} key={btn.text} label={btn.text} onClick={() => {
+        !dispatch(botButtonAction(btn))
         isFeedbackUpdated && dispatch(setIsFeedbackUpdated(false));
       }}
       />
-    } else {
-      return res.buttons?.map(btn => (
-        <Button disabled={disable(index)} key={btn.text} label={btn.text} onClick={() => {
-          !dispatch(botButtonAction(btn))
-          isFeedbackUpdated && dispatch(setIsFeedbackUpdated(false));
-        }}
-        />
-      ));
-    }
+    ));
   }
   return (
     <>
