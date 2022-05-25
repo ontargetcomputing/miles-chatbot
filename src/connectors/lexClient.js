@@ -14,7 +14,7 @@ import {
   setIsAgentTyping,
   disableInputField
 } from '../ducks/lexClient'
-import { ACTION_TYPE, BOT_TYPE, LIVECHAT_STATUS, END_CHAT_MESSAGES, TOPIC, LEXTHREAD_PROPS } from '../helper/enum'
+import { ACTION_TYPE, BOT_TYPE, LIVECHAT_STATUS, END_CHAT_MESSAGES, TOPIC, LEXTHREAD_PROPS, SEARCH_QUERY } from '../helper/enum'
 import { Util, convertLinks } from '../helper/Util'
 import { AgentLiveService, ConstructPayload } from './base-service.js/agentLiveService'
 import { axiosWithRetry } from './base-service.js/axios-wrapper'
@@ -70,7 +70,7 @@ const processResponse = data => {
 
     const newButtonsArray = [...buttonsArray.slice(0, 2)]
     newButtonsArray[0].value = 'QID::20.livechat.firstname'
-    newButtonsArray[1].value = 'QID::Welcome'
+    newButtonsArray[1].value = SEARCH_QUERY.WELCOME
 
     if (newButtonsArray.length >= 4 && agent_available !== 'true') {
       newButtonsArray.push(buttonsArray.slice(2, 5))

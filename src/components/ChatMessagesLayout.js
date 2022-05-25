@@ -2,7 +2,7 @@
 import Button from './Button'
 import Markdown from 'react-markdown'
 import BotMessage from './BotMessage'
-import { BOT_TYPE, FEEDBACK_TYPE, LIVECHAT_STATUS } from '../helper/enum'
+import { BOT_TYPE, FEEDBACK_TYPE, LIVECHAT_STATUS, TOPIC } from '../helper/enum'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useRef } from 'react'
 import { botButtonAction } from '../connectors/lexClient'
@@ -32,7 +32,7 @@ img {
 const thumpsup = 'assets/images/thums-up.svg'
 const thumpsdown = 'assets/images/thums-down.svg'
 
-const RenderMessages = ({ res, isHideFeedbackIcon }) => {
+const RenderMessages = ({ res, isEnableThumps }) => {
   const dispatch = useDispatch();
 
   const onClickFeedbackIcon = (feedbackType) => {
@@ -41,9 +41,9 @@ const RenderMessages = ({ res, isHideFeedbackIcon }) => {
   }
   const url = process.env.REACT_APP_ASSETS_URL ? true : false
   const thumpsUpPath = url ? `${process.env.REACT_APP_ASSETS_URL}/${thumpsup}` : `./${thumpsup}`
-  const thumpsDownPath = url ?  `${process.env.REACT_APP_ASSETS_URL}/${thumpsdown}` : `./${thumpsdown}`
-  const message = res?.message?.replace(/]\s\(/g,"](")
-   return (
+  const thumpsDownPath = url ? `${process.env.REACT_APP_ASSETS_URL}/${thumpsdown}` : `./${thumpsdown}`
+  const message = res?.message?.replace(/]\s\(/g, "](")
+  return (
     <>
       {res.message && <>
         <div className='bp-md:w--90 p-10'>
@@ -51,7 +51,7 @@ const RenderMessages = ({ res, isHideFeedbackIcon }) => {
             <Markdown linkTarget="_blank">{message}</Markdown>
           </BotMessage>
         </div>
-        {isHideFeedbackIcon && <FeedbackSection>
+        {isEnableThumps && <FeedbackSection>
           <img src={`${thumpsUpPath}`} alt="logo" onClick={() => onClickFeedbackIcon(FEEDBACK_TYPE.THUMBS_UP)} />
           <img src={`${thumpsDownPath}`} alt="logo" onClick={() => onClickFeedbackIcon(FEEDBACK_TYPE.THUMBS_DOWN)} />
         </FeedbackSection>}
@@ -64,7 +64,7 @@ const RenderMessages = ({ res, isHideFeedbackIcon }) => {
 
 RenderMessages.propTypes = {
   res: PropTypes.any,
-  isHideFeedbackIcon: PropTypes.bool
+  isEnableThumps: PropTypes.bool
 }
 
 export default function ChatMessagesLayout() {
@@ -77,26 +77,31 @@ export default function ChatMessagesLayout() {
   useEffect(scrollToBottom, [lexThread]);
 
   const lexThreadCount = lexThread.length;
-  const disablePrevious = (index) => (lexThreadCount === 1 || ((lexThreadCount - 1) === index));
-  const isHideFeedbackIcon = !isFeedbackUpdated && lexThreadCount > 2 && !agentAvailable && liveChat?.status === LIVECHAT_STATUS.DISCONNECTED;
+  const disable = index => isChatEnded || lexThreadCount > index + 1;
+  const isEnableThumps = !isFeedbackUpdated && lexThreadCount > 2 && !agentAvailable &&
+    liveChat?.status === LIVECHAT_STATUS.DISCONNECTED;
+
+  const actionButtons = (res, index) => {
+    const showOnlyBackToHomeButton = agentAvailable && res?.topic === TOPIC.STARTING;
+    let linkButton =showOnlyBackToHomeButton? res.buttons?.slice(-2):res.buttons;
+    
+      
+    return linkButton?.map(btn => (
+      <Button disabled={disable(index)} key={btn.text} label={btn.text} onClick={() => {
+        !dispatch(botButtonAction(btn))
+        isFeedbackUpdated && dispatch(setIsFeedbackUpdated(false));
+      }}
+      />
+    ));
+  }
   return (
     <>
       {lexThread.map((res, index) =>
         (res.type === BOT_TYPE.BOT || res.type === BOT_TYPE.AGENT) ? (
           <div key={index}>
-            <RenderMessages res={res} isHideFeedbackIcon={isHideFeedbackIcon && disablePrevious(index)} />
+            <RenderMessages res={res} isEnableThumps={isEnableThumps && !disable(index)} />
             <ButtonWrapper className='flex'>
-              {res.buttons?.map(btn => (
-                <Button
-                  disabled={isChatEnded || !disablePrevious(index)}
-                  key={btn.text}
-                  label={btn.text}
-                  onClick={() => {
-                    !dispatch(botButtonAction(btn))
-                    isFeedbackUpdated && dispatch(setIsFeedbackUpdated(false));
-                  }}
-                />
-              ))}
+              {actionButtons(res, index)}
             </ButtonWrapper>
           </div>
         ) : (
@@ -107,4 +112,5 @@ export default function ChatMessagesLayout() {
       {isChatEnded && <MessageText>{message}</MessageText>}
     </>
   )
+
 }

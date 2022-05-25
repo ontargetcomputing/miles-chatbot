@@ -1,5 +1,5 @@
 import { createReducer, createAction } from '@reduxjs/toolkit';
-import { ACTION_TYPE, LIVECHAT_STATUS } from '../helper/enum';
+import { ACTION_TYPE, LIVECHAT_STATUS, SEARCH_QUERY } from '../helper/enum';
 export const lexPostCall = createAction('lexClient/lexPostCall');
 export const setSearchTerm = createAction('lexClient/setSearchTerm');
 export const setActionType = createAction("lexClient/setActionType");
@@ -19,7 +19,7 @@ export const disableInputField = createAction("lexClient/disableInputField")
 const initialState = {
   isLoading: false,
   lexThread: [],
-  searchTerm: 'QID::Welcome',
+  searchTerm: SEARCH_QUERY.WELCOME,
   actionType: ACTION_TYPE.DEFAULT,
   language: "en",
   chatEnded: {

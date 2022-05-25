@@ -17,7 +17,8 @@ export const TOPIC = {
     LAST_NAME: "liveChat.lastname",
     EMAIL: "liveChat.emailaddress",
     PHONE_NUMBER: "liveChat.phonenumber",
-    ENTERING_TOPIC: "liveChatStatus.enteringTopic"
+    ENTERING_TOPIC: "liveChatStatus.enteringTopic",
+    STARTING: "liveChatStatus.starting"
 }
 
 export const BOT_TYPE = {
@@ -47,4 +48,8 @@ export const END_CHAT_MESSAGES = {
 export const FEEDBACK_TYPE = {
     THUMBS_UP: "Thumbs up",
     THUMBS_DOWN: "Thumbs down"
+}
+
+export const SEARCH_QUERY = {
+    WELCOME: "QID::Welcome"
 }
