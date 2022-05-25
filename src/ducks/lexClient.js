@@ -7,7 +7,7 @@ export const setLanguage = createAction("lexClient/setLanguage");
 export const setEndChat = createAction("lexClient/setEndChat");
 export const resetIdleTimer = createAction("lexClient/resetIdleTimer");
 export const pushMessages = createAction("lexClient/pushMessages");
-export const agentAvailable = createAction("lexClient/agentAvailable");
+export const setAgentAvailable = createAction("lexClient/setAgentAvailable");
 export const setliveChat = createAction("lexClient/setliveChat");
 export const setSessionData = createAction("lexClient/setSessionData");
 export const setIsLoading = createAction("lexClient/setIsLoading");
@@ -59,7 +59,7 @@ export default createReducer(initialState, {
   [pushMessages]: (state, action) => {
     state.lexThread = action.payload
   },
-  [agentAvailable]: (state, action) => {
+  [setAgentAvailable]: (state, action) => {
     state.agentAvailable = action.payload;
   },
   [setliveChat]: (state, action) => {
