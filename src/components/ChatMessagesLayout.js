@@ -79,7 +79,6 @@ RenderMessages.propTypes = {
   isEnableThumps: PropTypes.bool,
 }
 
-
 export default function ChatMessagesLayout({ agentAvailable }) {
   const { lexThread, chatEnded, liveChat, isFeedbackUpdated } = useSelector(
     store => store.lexClient
@@ -90,7 +89,7 @@ export default function ChatMessagesLayout({ agentAvailable }) {
   const scrollToBottom = () =>
     messagesEndRef?.current?.scrollIntoView({ behavior: 'smooth' })
 
-  useEffect(scrollToBottom, [lexThread])
+    useEffect(()=>setTimeout(scrollToBottom,5), [lexThread])
 
   const lexThreadCount = lexThread.length
   const disable = index => isChatEnded || lexThreadCount > index + 1
@@ -101,13 +100,10 @@ export default function ChatMessagesLayout({ agentAvailable }) {
     liveChat?.status === LIVECHAT_STATUS.DISCONNECTED
 
   const actionButtons = (res, index) => {
-     let newArr = [...res.buttons]
-      newArr.splice(0,2)
     const showOnlyBackToHomeButton =
       !agentAvailable && res?.topic === TOPIC.STARTING
-
     let linkButton = showOnlyBackToHomeButton
-      ? newArr
+      ? res.buttons?.slice(2)
       : res.buttons
     return linkButton?.map(btn => (
       <Button
