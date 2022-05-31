@@ -12,12 +12,13 @@ import {
   setSessionData,
   setIsLoading,
   setIsAgentTyping,
-  disableInputField
+  disableInputField,
 } from '../ducks/lexClient'
 import { ACTION_TYPE, BOT_TYPE, LIVECHAT_STATUS, END_CHAT_MESSAGES, TOPIC, LEXTHREAD_PROPS, SEARCH_QUERY } from '../helper/enum'
-import { Util, convertLinks } from '../helper/Util'
+import { Util } from '../helper/Util'
 import { AgentLiveService, ConstructPayload } from './base-service.js/agentLiveService'
 import { axiosWithRetry } from './base-service.js/axios-wrapper'
+import { convertLinks } from '../helper/Util'
 
 const service = new AgentLiveService()
 
@@ -114,12 +115,10 @@ export const searchQuery =
     }
 
 export const botButtonAction = buttonItem => (dispatch, getState) => {
-  const { lexThread  } = getState().lexClient
-  const recentThread = lexThread.length && lexThread[lexThread.length - 1]
-  const isAgentAvailable = recentThread?.isAgentAvailable
+  const { lexThread, agentAvailable  } = getState().lexClient
   const checkTopicEntered = Util.getPropsFromArray(LEXTHREAD_PROPS.TOPIC, lexThread) === TOPIC.ENTERING_TOPIC
   if (
-    isAgentAvailable &&
+    agentAvailable &&
     checkTopicEntered
   ) {
     dispatch(updateLexThread(buttonItem.text,  BOT_TYPE.HUMAN))
@@ -128,7 +127,7 @@ export const botButtonAction = buttonItem => (dispatch, getState) => {
 
     return
   }
-  const displayText = isAgentAvailable ?  buttonItem.text : buttonItem.text
+  const displayText = agentAvailable ?  buttonItem.text : buttonItem.text
   dispatch(searchQuery(buttonItem.value, displayText))
 }
 

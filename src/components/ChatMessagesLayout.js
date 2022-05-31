@@ -1,5 +1,6 @@
 import Button from './Button'
-import Markdown from 'react-markdown'
+import DOMPurify from 'dompurify';
+import marked from "marked";
 import BotMessage from './BotMessage'
 import { BOT_TYPE, FEEDBACK_TYPE, LIVECHAT_STATUS, TOPIC } from '../helper/enum'
 import { useDispatch, useSelector } from 'react-redux'
@@ -11,6 +12,15 @@ import PropTypes from 'prop-types'
 import { leXTextCall } from '../connectors/lexClient'
 import { setIsFeedbackUpdated } from '../ducks/lexClient'
 
+let renderer = new marked.Renderer();
+renderer.link = function(href, title, text) {
+    let link = marked.Renderer.prototype.link.call(this, href, title, text);
+    return link.replace("<a","<a target='_blank' ");
+};
+
+marked.setOptions({
+    renderer
+});
 const ButtonWrapper = styled.div`
   margin-left: 12px;
 `
@@ -44,14 +54,19 @@ const RenderMessages = ({ res, isEnableThumps }) => {
   const thumpsDownPath = url
     ? `${process.env.REACT_APP_ASSETS_URL}/${thumpsdown}`
     : `./${thumpsdown}`
+
   const message = res?.message?.replace(/]\s\(/g, '](')
+  const sanitizer = DOMPurify.sanitize(marked(message), { ADD_ATTR: ['target'] });
   return (
     <>
       {res.message && (
         <>
           <div className='bp-md:w--90 p-10'>
             <BotMessage type={res.type}>
-              <Markdown linkTarget='_blank'>{message}</Markdown>
+             <div
+        className="preview"
+        dangerouslySetInnerHTML={{ __html: sanitizer }}
+      />
             </BotMessage>
           </div>
           {isEnableThumps && (

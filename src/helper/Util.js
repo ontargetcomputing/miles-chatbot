@@ -56,16 +56,21 @@ export class Util {
 
 
 
-
 export const convertLinks = (text) => {
-    const regex = new RegExp(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/, 'sg');
-    let cookedText = text.replace(/~!/g, '[').replace(/!~/g, ']')
-    let m;
-    while ((m = regex.exec(cookedText)) !== null) {
-      cookedText = cookedText.replace(m[0], `(${m[0]})`)
-    }
-    return cookedText
+  const checkMark = text.match(/~![A-Za-z]+/g); //checks for exclamtion and tilda sign if exists does not add parenthesis to the cooked text
+  if (!checkMark) {return text;}
+  const regex = new RegExp(
+    /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/,
+    "sg"
+  );
+  let cookedText = text.replace(/~!/g, "[").replace(/!~/g, "]");
+  let m;
+  while ((m = regex.exec(cookedText)) !== null) {
+    cookedText = cookedText.replace(m[0], `(${m[0]})`);
   }
+  return cookedText;
+};
+
 
   export const isRequired = (data, cb) => {
     if (!InputUtil.isRequired(data)) {
