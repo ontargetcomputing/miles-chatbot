@@ -15,6 +15,7 @@ export const setIsAgentTyping = createAction("lexClient/setIsAgentTyping");
 export const setIsFeedbackUpdated = createAction("lexClient/setIsFeedbackUpdated");
 export const setUserDetails = createAction("lexClient/userDetails")
 export const disableInputField = createAction("lexClient/disableInputField")
+export const setLanguageButton = createAction("lexClient/setLanguageButton")
 
 const initialState = {
   isLoading: false,
@@ -32,7 +33,8 @@ const initialState = {
   sessionData: {},
   isFeedbackUpdated: false,
   userDetails:{},
-  disableInput: false
+  disableInput: false,
+  disableLanguageButton: false
 }
 
 export default createReducer(initialState, {
@@ -87,4 +89,7 @@ export default createReducer(initialState, {
   [disableInputField]: (state, action) => {
     state.disableInput= action.payload
   },
+  [setLanguageButton]: (state, action) => {
+    state.disableLanguageButton= action.payload
+  }
 })
