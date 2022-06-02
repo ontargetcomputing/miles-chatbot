@@ -14,9 +14,20 @@ import {
   setIsAgentTyping,
   disableInputField,
 } from '../ducks/lexClient'
-import { ACTION_TYPE, BOT_TYPE, LIVECHAT_STATUS, END_CHAT_MESSAGES, TOPIC, LEXTHREAD_PROPS, SEARCH_QUERY } from '../helper/enum'
+import {
+  ACTION_TYPE,
+  BOT_TYPE,
+  LIVECHAT_STATUS,
+  END_CHAT_MESSAGES,
+  TOPIC,
+  LEXTHREAD_PROPS,
+  SEARCH_QUERY,
+} from '../helper/enum'
 import { Util } from '../helper/Util'
-import { AgentLiveService, ConstructPayload } from './base-service.js/agentLiveService'
+import {
+  AgentLiveService,
+  ConstructPayload,
+} from './base-service.js/agentLiveService'
 import { axiosWithRetry } from './base-service.js/axios-wrapper'
 import { convertLinks } from '../helper/Util'
 
@@ -24,45 +35,47 @@ const service = new AgentLiveService()
 
 export const leXTextCall =
   (searchTerm, initialRender = false) =>
-    async (dispatch, getState) => {
-      try {
-        dispatch(setIsLoading(true));
-        const { lexThread } = getState().lexClient
-        const response = await Interactions.send(
-          process.env.REACT_APP_MILES_BOT,
-          searchTerm
-        )
-        dispatch(setIsLoading(false));
-        processResponse(response)
-        let qnabotcontext = response?.sessionAttributes?.qnabotcontext
-        const language = qnabotcontext
-          ? JSON.parse(qnabotcontext).userLocale
-          : 'en'
-          const buttons = JSON.parse(response?.sessionAttributes?.appContext)
-        const newThread = [
-          ...lexThread,
-          {
-            message: initialRender ? '' : response.message,
-            buttons: buttons?.responseCard?.genericAttachments[0]?.buttons
-              ? buttons?.responseCard?.genericAttachments[0]?.buttons
-              : [],
-            type: 'bot',
-            language,
-            topic: response?.sessionAttributes?.topic,
-            isAgentAvailable:
-              response?.sessionAttributes.agents_available === 'true',
-            sessionAttributes: response?.sessionAttributes,
-            date: new Date()
-          },
-        ]
+  async (dispatch, getState) => {
+    try {
+      dispatch(setIsLoading(true))
+      const { lexThread } = getState().lexClient
+      const response = await Interactions.send(
+        process.env.REACT_APP_MILES_BOT,
+        searchTerm
+      )
+      dispatch(setIsLoading(false))
+      processResponse(response)
+      let qnabotcontext = response?.sessionAttributes?.qnabotcontext
+      const language = qnabotcontext
+        ? JSON.parse(qnabotcontext).userLocale
+        : 'en'
+      const buttons = response?.sessionAttributes?.appContext
+        ? JSON.parse(response.sessionAttributes.appContext)
+        : null
+      const newThread = [
+        ...lexThread,
+        {
+          message: initialRender ? '' : response.message,
+          buttons: buttons?.responseCard?.genericAttachments[0]?.buttons
+            ? buttons?.responseCard?.genericAttachments[0]?.buttons
+            : [],
+          type: 'bot',
+          language,
+          topic: response?.sessionAttributes?.topic,
+          isAgentAvailable:
+            response?.sessionAttributes.agents_available === 'true',
+          sessionAttributes: response?.sessionAttributes,
+          date: new Date(),
+        },
+      ]
 
-        dispatch(lexPostCall(newThread))
-        language && dispatch(setLanguage(language))
-      } catch (err) {
-        dispatch(setIsLoading(false));
-        console.log(err)
-      }
+      dispatch(lexPostCall(newThread))
+      language && dispatch(setLanguage(language))
+    } catch (err) {
+      dispatch(setIsLoading(false))
+      console.log(err)
     }
+  }
 
 const processResponse = data => {
   if (data.sessionAttributes.topic === TOPIC.ENTERING_TOPIC) {
@@ -91,43 +104,45 @@ export const changeLanguage = language => async dispatch => {
 
 export const searchQuery =
   (query, displayText = '') =>
-    async (dispatch, getState) => {
-      const { lexThread, language, liveChat, sessionData, agentAvailable } = getState().lexClient
-      const value = {
-        type: 'human',
-        message: displayText || query,
-        language,
-        date: new Date()
-      }
-      const newThread = [...lexThread, value]
-      const topic = lexThread[lexThread.length - 1].topic === 'liveChatStatus.enteringTopic'
-      if(agentAvailable && topic){
-        dispatch(updateLexThread(query,BOT_TYPE.HUMAN))
-      }
-     else if (liveChat.status === LIVECHAT_STATUS.ESTABLISHED || liveChat.status === LIVECHAT_STATUS.CONNECTING) {
-        const data = await service.sendMessage(language, sessionData, query)
-        data.status === 200 ? dispatch(pushMessages(newThread)) : null
-      }
-        else {
-        dispatch(lexPostCall(newThread))
-        dispatch(leXTextCall(query))
-      }
+  async (dispatch, getState) => {
+    const { lexThread, language, liveChat, sessionData, agentAvailable } =
+      getState().lexClient
+    const value = {
+      type: 'human',
+      message: displayText || query,
+      language,
+      date: new Date(),
     }
+    const newThread = [...lexThread, value]
+    const topic =
+      lexThread[lexThread.length - 1].topic === 'liveChatStatus.enteringTopic'
+    if (agentAvailable && topic) {
+      dispatch(updateLexThread(query, BOT_TYPE.HUMAN))
+    } else if (
+      liveChat.status === LIVECHAT_STATUS.ESTABLISHED ||
+      liveChat.status === LIVECHAT_STATUS.CONNECTING
+    ) {
+      const data = await service.sendMessage(language, sessionData, query)
+      data.status === 200 ? dispatch(pushMessages(newThread)) : null
+    } else {
+      dispatch(lexPostCall(newThread))
+      dispatch(leXTextCall(query))
+    }
+  }
 
 export const botButtonAction = buttonItem => (dispatch, getState) => {
-  const { lexThread, agentAvailable  } = getState().lexClient
-  const checkTopicEntered = Util.getPropsFromArray(LEXTHREAD_PROPS.TOPIC, lexThread) === TOPIC.ENTERING_TOPIC
-  if (
-    agentAvailable &&
-    checkTopicEntered
-  ) {
-    dispatch(updateLexThread(buttonItem.text,  BOT_TYPE.HUMAN))
+  const { lexThread, agentAvailable } = getState().lexClient
+  const checkTopicEntered =
+    Util.getPropsFromArray(LEXTHREAD_PROPS.TOPIC, lexThread) ===
+    TOPIC.ENTERING_TOPIC
+  if (agentAvailable && checkTopicEntered) {
+    dispatch(updateLexThread(buttonItem.text, BOT_TYPE.HUMAN))
     dispatch(createCase(buttonItem.text))
     dispatch(disableInputField(false))
 
     return
   }
-  const displayText = agentAvailable ?  buttonItem.text : buttonItem.text
+  const displayText = agentAvailable ? buttonItem.text : buttonItem.text
   dispatch(searchQuery(buttonItem.value, displayText))
 }
 
@@ -142,60 +157,73 @@ export const translator = async (targetLanguage, message) => {
 }
 
 export const updateLexThread =
-  (message, type = BOT_TYPE.BOT) => async (dispatch, getState) => {
+  (message, type = BOT_TYPE.BOT) =>
+  async (dispatch, getState) => {
     const { lexThread } = getState().lexClient
     const newThread = [...lexThread, { message, type }]
 
     dispatch(pushMessages(newThread))
   }
 
-  let chatRequest=''
+let chatRequest = ''
 
 const getMessage = (service, payload) => async (dispatch, getState) => {
-  const { liveChat, chatEnded, isAgentTyping } = getState().lexClient;
+  const { liveChat, chatEnded, isAgentTyping } = getState().lexClient
   const { isChatEnded } = chatEnded
-  const checkStatus = liveChat.status === LIVECHAT_STATUS.CONNECTING || liveChat.status === LIVECHAT_STATUS.ESTABLISHED
+  const checkStatus =
+    liveChat.status === LIVECHAT_STATUS.CONNECTING ||
+    liveChat.status === LIVECHAT_STATUS.ESTABLISHED
   try {
-    const response = await service.getMessage(payload);
-    const joinedMsg = checkStatus && await translator(payload.targetLanguage, CONFIG.LIVE_AGENT.HAS_JOINED)?.data?.translation || CONFIG.LIVE_AGENT.HAS_JOINED;
+    const response = await service.getMessage(payload)
+    const joinedMsg =
+      (checkStatus &&
+        (await translator(payload.targetLanguage, CONFIG.LIVE_AGENT.HAS_JOINED)
+          ?.data?.translation)) ||
+      CONFIG.LIVE_AGENT.HAS_JOINED
 
     const chatRequestSuccess = async () => {
-      const responseConnectionEstablished = await translator(payload.targetLanguage, CONFIG.LIVE_AGENT.LIVE_CHAT_CONNECTION)
-      dispatch(updateLexThread(responseConnectionEstablished.data?.translation));
+      const responseConnectionEstablished = await translator(
+        payload.targetLanguage,
+        CONFIG.LIVE_AGENT.LIVE_CHAT_CONNECTION
+      )
+      dispatch(updateLexThread(responseConnectionEstablished.data?.translation))
     }
 
-    const ChatEstablished = async (element) => {
-      dispatch(setliveChat({ ...liveChat, status: LIVECHAT_STATUS.ESTABLISHED }));
+    const ChatEstablished = async element => {
+      dispatch(
+        setliveChat({ ...liveChat, status: LIVECHAT_STATUS.ESTABLISHED })
+      )
       dispatch(updateLexThread(`${element.message.name} ${joinedMsg}`))
     }
 
-
-    const chatMessage = (data) => {
+    const chatMessage = data => {
       const cookedText = convertLinks(data.message.text)
-      dispatch(updateLexThread(cookedText, BOT_TYPE.AGENT));
+      dispatch(updateLexThread(cookedText, BOT_TYPE.AGENT))
     }
 
-    const chatRequestFail = (element) => {
-      chatRequest= element
+    const chatRequestFail = element => {
+      chatRequest = element
       dispatch(updateLexThread('Unable to connect with an agent.'))
     }
 
-    const messages = response.data.messages;
-    dispatch(setIsLoading(false));
-    isAgentTyping && messages.indexOf("AgentTyping") !== -1 && dispatch(setIsAgentTyping(false));
+    const messages = response.data.messages
+    dispatch(setIsLoading(false))
+    isAgentTyping &&
+      messages.indexOf('AgentTyping') !== -1 &&
+      dispatch(setIsAgentTyping(false))
 
-    messages.forEach(async (element) => {
-      console.log("--------GET_MESSAGE--------", element);
+    messages.forEach(async element => {
+      console.log('--------GET_MESSAGE--------', element)
       switch (element.type) {
         case 'ChatRequestSuccess':
-          await chatRequestSuccess();
-          break;
+          await chatRequestSuccess()
+          break
         case 'ChatEstablished':
           ChatEstablished(element)
-          break;
+          break
         case 'ChatMessage':
-          chatMessage(element);
-          break;
+          chatMessage(element)
+          break
         // case 'CustomEvent':
         //   // customEvent(element);
         //   break;
@@ -203,28 +231,35 @@ const getMessage = (service, payload) => async (dispatch, getState) => {
         //   // queueUpdate(element);
         //   break;
         case 'AgentTyping':
-          dispatch(setIsAgentTyping(true));
-          break;
+          dispatch(setIsAgentTyping(true))
+          break
         case 'AgentNotTyping':
-          dispatch(setIsAgentTyping(false));
-          break;
+          dispatch(setIsAgentTyping(false))
+          break
         case 'ChatEnded':
-          dispatch(setEndChat({ isChatEnded: true, message: "Agent has ended the session" }))
-          break;
+          dispatch(
+            setEndChat({
+              isChatEnded: true,
+              message: 'Agent has ended the session',
+            })
+          )
+          break
         case 'ChatRequestFail':
           chatRequestFail(element?.type)
-          break;
+          break
         default:
           console.error(`Unknown message type:${element.type}`)
       }
-    });
-
+    })
   } catch (error) {
-    console.log("GetMessage_Error", error);
+    console.log('GetMessage_Error', error)
   } finally {
     // await sleep(CONFIG.LIVE_AGENT.SALESFORCE_POLLING_INTERVAL);
     if (checkStatus && !isChatEnded && !chatRequest) {
-      setTimeout(() => dispatch(getMessage(service, payload)), CONFIG.LIVE_AGENT.SALESFORCE_POLLING_INTERVAL);
+      setTimeout(
+        () => dispatch(getMessage(service, payload)),
+        CONFIG.LIVE_AGENT.SALESFORCE_POLLING_INTERVAL
+      )
     }
   }
 }
@@ -239,20 +274,23 @@ export const createCase = actionType => async (dispatch, getState) => {
       language,
       actionType
     )
-  const userDetail =  `${userDetails['liveChat.firstname']} ${userDetails['liveChat.lastname']} - ${casePayload.email}`
-    dispatch(setIsLoading(true));
+    const userDetail = `${userDetails['liveChat.firstname']} ${userDetails['liveChat.lastname']} - ${casePayload.email}`
+    dispatch(setIsLoading(true))
     const result = await service.createCase(casePayload)
 
     if (result?.status === 200) {
-      dispatch(setliveChat({ ...casePayload, status: LIVECHAT_STATUS.CREATING_CASE }));
+      dispatch(
+        setliveChat({ ...casePayload, status: LIVECHAT_STATUS.CREATING_CASE })
+      )
       const caseData = Util.parseCreateCaseResponse(result.data)
 
       const initLiveAgentSession = async () => {
-        dispatch(setliveChat({ ...casePayload, status: LIVECHAT_STATUS.CONNECTING }));
+        dispatch(
+          setliveChat({ ...casePayload, status: LIVECHAT_STATUS.CONNECTING })
+        )
         const session = await service.startSession()
 
         if (session.status === 200) {
-
           const livechatConnectionTranslate = await translator(
             language,
             CONFIG.LIVE_AGENT.LIVE_CHAT_CONNECTION
@@ -270,12 +308,11 @@ export const createCase = actionType => async (dispatch, getState) => {
             if (connectResponse.status === 200) {
               const payload = {
                 session: ConstructPayload.sessionPayload(session?.data),
-                targetLanguage: language
-
+                targetLanguage: language,
               }
-              dispatch(setIsLoading(false));
+              dispatch(setIsLoading(false))
               dispatch(setSessionData(payload))
-              await dispatch(getMessage(service, payload));
+              await dispatch(getMessage(service, payload))
             }
           }
         }
@@ -291,7 +328,11 @@ export const createCase = actionType => async (dispatch, getState) => {
       )
 
       if (waitingForAgentResponse?.status === 200) {
-        dispatch(updateLexThread(waitingForAgentResponse.data?.translation || waitingForAgent))
+        dispatch(
+          updateLexThread(
+            waitingForAgentResponse.data?.translation || waitingForAgent
+          )
+        )
         const thanksForWaitingResponse = await service.translator(
           language,
           CONFIG.LIVE_AGENT.WAITING_FOR_AGENT_MESSAGE
@@ -302,13 +343,13 @@ export const createCase = actionType => async (dispatch, getState) => {
         }
       }
     } else {
-      dispatch(setIsLoading(false));
-      dispatch(setliveChat(null));
+      dispatch(setIsLoading(false))
+      dispatch(setliveChat(null))
     }
   } catch (error) {
-    console.log(error);
-    dispatch(setIsLoading(false));
-  // eslint-disable-next-line max-lines
+    console.log(error)
+    dispatch(setIsLoading(false))
+    // eslint-disable-next-line max-lines
   }
 }
 
@@ -316,8 +357,16 @@ export const endChat = () => async (dispatch, getState) => {
   const { sessionData } = getState().lexClient
   if (Object.keys(sessionData).length) {
     const result = await service.endChat(sessionData)
-    result.status === 200 && dispatch(setEndChat({ isChatEnded: true, message: END_CHAT_MESSAGES.AFTER_CONNECTION }))
+    result.status === 200 &&
+      dispatch(
+        setEndChat({
+          isChatEnded: true,
+          message: END_CHAT_MESSAGES.AFTER_CONNECTION,
+        })
+      )
   } else {
-    dispatch(setEndChat({ isChatEnded: true, message: END_CHAT_MESSAGES.END_CHAT }))
+    dispatch(
+      setEndChat({ isChatEnded: true, message: END_CHAT_MESSAGES.END_CHAT })
+    )
   }
 }
