@@ -6,6 +6,7 @@ import Layout from './components/Layout'
 import Theme from './Theme'
 import { useEffect } from 'react'
 import { leXTextCall } from './connectors/lexClient'
+import Notifier from './Notifier'
 
 const GlobalStyle = createGlobalStyle`
 html, body, #root, .content-container{
@@ -58,6 +59,7 @@ const App = () => {
       <Header />
       <Layout />
       <Footer />
+      <Notifier/> 
     </Theme>
   )
 }
