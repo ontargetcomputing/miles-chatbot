@@ -41,14 +41,13 @@ const Notifier = () => {
     // }
 
     useEffect(() => {
-        const isAgent = lexThread.length && lexThread[lexThread.length - 1].type === BOT_TYPE.AGENT;
-        if (isAgent && document.visibilityState !== 'visible') {
+        const humanType = lexThread.length && lexThread[lexThread.length - 1].type === BOT_TYPE.HUMAN;
+        if (!humanType) {
             // setCount(count + 1);
             toggle();
             // showCount(count + 1)
         }
     }, [lexThread]);
-
 
 
     // const showCount = (notificationCount) => {
