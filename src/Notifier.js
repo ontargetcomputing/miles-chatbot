@@ -25,8 +25,10 @@ const useAudio = url => {
 };
 
 const Notifier = () => {
-    const url = "/assets/miles-1.mp3";
-    const [, toggle] = useAudio(url);
+    const url = process.env.REACT_APP_ASSETS_URL ? true : false
+    const soundPath = "/assets/miles-1.mp3";
+    const notification = url ? `${process.env.REACT_APP_ASSETS_URL}${soundPath}` : `${soundPath}`
+    const [, toggle] = useAudio(notification);
     const { lexThread } = useSelector(store => store.lexClient);
     // const [count, setCount] = useState(0);
 
