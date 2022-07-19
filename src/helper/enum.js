@@ -51,5 +51,7 @@ export const FEEDBACK_TYPE = {
 }
 
 export const SEARCH_QUERY = {
-    WELCOME: "QID::Welcome"
+    WELCOME: "QID::Welcome",
+    BOOTSTRAP: 'QID::Bootstrap.Miles.001',
+    LANGUAGE: 'English'
 }

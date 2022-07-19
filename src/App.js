@@ -7,6 +7,7 @@ import Theme from './Theme'
 import { useEffect } from 'react'
 import { leXTextCall } from './connectors/lexClient'
 import Notifier from './Notifier'
+import { SEARCH_QUERY } from './helper/enum'
 
 const GlobalStyle = createGlobalStyle`
 html, body, #root, .content-container{
@@ -42,15 +43,18 @@ html, body, #root, .content-container{
   }
 }
 `
-
 const App = () => {
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    const bootstrap = 'QID::Bootstrap.Miles.001'
-    dispatch(leXTextCall(bootstrap, true))
-    const language = 'English'
-    dispatch(leXTextCall(language, true))
+  useEffect(async () => {
+    if(localStorage.getItem('topic')){
+      await localStorage.clear();
+      dispatch(leXTextCall(SEARCH_QUERY.BOOTSTRAP, true))
+      dispatch(leXTextCall(SEARCH_QUERY.LANGUAGE, true))
+    } else {
+      dispatch(leXTextCall(SEARCH_QUERY.BOOTSTRAP, true))
+      dispatch(leXTextCall(SEARCH_QUERY.LANGUAGE, true))
+    }
   }, [])
 
   return (

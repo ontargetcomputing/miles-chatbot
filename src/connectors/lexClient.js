@@ -78,6 +78,9 @@ export const leXTextCall =
   }
 
 const processResponse = data => {
+  if(data.sessionAttributes.topic === TOPIC.STARTING){
+    localStorage.setItem('topic', data.sessionAttributes.topic)
+  }
   if (data.sessionAttributes.topic === TOPIC.ENTERING_TOPIC) {
     const agent_available = data.sessionAttributes.agents_available
     const buttonsArray = data.responseCard.genericAttachments[0].buttons
