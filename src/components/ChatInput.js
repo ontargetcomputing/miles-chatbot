@@ -75,8 +75,7 @@ function ChatInput() {
     setTopic(newTopic);
   }, [lexThread]);
 
-  const handleSubmit = e => {
-    e.preventDefault();
+  const handleSubmit = () => {
     setTopic("");
     setErrorMsg("");
     setShowError(false);
@@ -95,7 +94,10 @@ function ChatInput() {
   const onChange = data => setSearchTerm(data)
   const disableBtn = errorMsg || isLoading || disableInput
   return (
-    <Form onSubmit={e => handleSubmit(e)} >
+    <Form onSubmit={e => {
+      e.preventDefault()
+      !disableBtn && handleSubmit(e)
+    }} >
       <StartHereWrapper className={`flex flex--align-start ${errorMsg && showError &&  "bot-error"}`}>
         <InputText
           pattern={pattern[lexTopic] || null}
