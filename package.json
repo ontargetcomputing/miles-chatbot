@@ -1,6 +1,6 @@
 {
   "name": "miles-chatbot",
-  "version": "1.14.2",
+  "version": "1.14.1",
   "private": true,
   "dependencies": {
     "@ca-dmv/core": "^1.2.169",
@@ -22,6 +22,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "start-pc": "PORT=3006 react-scripts start",
     "build": "GENERATE_SOURCEMAP=false react-scripts build",
     "test": "react-scripts test --coverage --watchAll",
     "eject": "react-scripts eject",
