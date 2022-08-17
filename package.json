@@ -22,6 +22,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "start-pc": "PORT=3006 react-scripts start",
     "build": "GENERATE_SOURCEMAP=false react-scripts build",
     "test": "react-scripts test --coverage --watchAll",
     "eject": "react-scripts eject",

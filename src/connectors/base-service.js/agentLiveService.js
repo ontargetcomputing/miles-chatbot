@@ -67,7 +67,7 @@ export class AgentLiveService {
         const config = {
             method: 'post',
             url: `${CONFIG.LIVE_AGENT.ENDPOINT}/getMessage`,
-            timeout: 1000,
+            timeout: 0,
             data: payload
         };
         return await axiosWithRetry(config);
