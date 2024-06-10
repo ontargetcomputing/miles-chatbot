@@ -44,7 +44,7 @@ function Layout() {
   }, [lexThread])
   return (
     <>
-      <IdleTime idleTimeInSeconds={600} warnTimeInSeconds={60} />
+      <IdleTime idleTimeInSeconds={2700} warnTimeInSeconds={60} />
       <LayoutWrapper className={isLoading ? "cb-disabled" : ""}>
         {checkActionType ? <ChangeLanguage /> : <ChatMessagesLayout agentAvailable={isAgentAvailable}/>}
         {isShowLoading&& <Loading loadingText={isAgentTyping?"Agent is typing...": "Loading..."}/>}
